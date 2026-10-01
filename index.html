@@ -107,6 +107,23 @@ td.num{text-align:right}
 .ghost{border:1px solid var(--line);background:var(--panel);padding:7px 12px;border-radius:8px;font-size:14px}
 .ghost:hover{border-color:var(--muted)}
 .ghost.warn{border-color:var(--warn);color:var(--warn)}
+.helpers{align-items:center;margin:0 0 4px}
+.assist{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin-top:-4px}
+.assist:empty{display:none}
+.assist button{border:0;background:none;padding:4px 0;color:var(--accent);font-weight:500;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;transition:text-decoration-color .15s}
+.assist button:hover,.assist button[aria-expanded="true"]{text-decoration-color:currentColor}
+.assist button small{color:var(--muted);font:12px var(--f-mono);margin-left:6px}
+.assist button.sol{color:var(--muted);font-weight:400}
+.assist button.sol.warn{color:var(--warn)}
+.assist.nudge .assist-q{color:var(--ink);font-weight:600}
+.hbox:empty{display:none}
+section.bench .learn{max-width:none;margin:0}
+section.bench .hint{margin:0;max-width:none}
+section.bench .hbox > .label:first-child{margin-top:0}
+.ghost small{color:var(--muted);font-size:12px;margin-left:8px;font-family:var(--f-mono)}
+.textlink{border:0;background:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:7px 4px;font-size:14px}
+.textlink:hover{color:var(--ink)}
+.textlink.warn{color:var(--warn)}
 .hint{margin-top:12px;padding:12px 14px;border-radius:var(--r);background:var(--warn-soft);border:1px solid var(--warn);font-size:14px;max-width:62ch}
 .solution{margin-top:12px}
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin:0 0 18px}
@@ -154,6 +171,17 @@ section.bench{display:flex;flex-direction:column;gap:14px;padding:22px 24px 40px
 .empty small{display:block;margin-top:8px;font-size:12.5px}
 [hidden]{display:none!important}
 .beta{font:600 10px var(--f-body);text-transform:uppercase;letter-spacing:.1em;color:var(--accent);border:1px solid var(--accent);border-radius:99px;padding:1px 7px;align-self:center}
+.learn{max-width:62ch;margin:12px 0 0;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
+.learn-h{padding:10px 14px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.learn-h span{font:600 11px var(--f-body);text-transform:uppercase;letter-spacing:.09em;color:var(--accent)}
+.learn-h code{font-size:.92em}
+.learn p{margin:0;padding:0 14px 12px;font-size:14px;color:var(--muted)}
+.learn p code{background:var(--code-bg);border:1px solid var(--line);padding:0 5px;border-radius:5px;font-size:.88em;color:var(--ink)}
+.learn-ex{border-top:1px solid var(--line);background:var(--code-bg)}
+.learn-ex .ctx{border:0;border-radius:0;margin:0;background:transparent;font-size:12.5px}
+.learn-out{display:flex;gap:10px;align-items:baseline;padding:8px 14px;border-top:1px dashed var(--line);font-size:12.5px;min-width:0}
+.learn-out span{font:600 11px var(--f-body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);flex:none}
+.learn-out code{color:var(--ok);font-family:var(--f-mono);overflow-wrap:anywhere}
 .intro{max-width:62ch;margin:0 0 16px;padding:10px 14px;border:1px solid var(--line);background:var(--panel-2);border-radius:8px;font-size:14px;color:var(--muted)}
 .intro b{color:var(--ink);font-weight:600;margin-right:4px}
 .intro code{background:var(--code-bg);border:1px solid var(--line);padding:0 5px;border-radius:5px;font-size:.88em;color:var(--ink)}
@@ -202,6 +230,7 @@ details.data .tablewrap{margin-top:6px}
 @keyframes pop{from{transform:translateY(6px);opacity:.4}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion: reduce){ .win{animation:none} .bar i{transition:none} }
 
+@media (min-width:861px){ .app{height:100%} .grid{overflow:hidden} }
 @media (max-width:1180px){
   .grid{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
   nav.list{display:none}
@@ -217,6 +246,8 @@ details.data .tablewrap{margin-top:6px}
   .meter{order:3;flex-basis:100%}
   header.top{position:static}
   .brand small{display:none}
+  .assist{gap:4px 12px;font-size:13.5px}
+  .assist button small{margin-left:4px;font-size:11px}
   .ed > pre,.ed > textarea,.ed > .mirror{font-size:13px}
 }
 </style>
@@ -262,6 +293,10 @@ details.data .tablewrap{margin-top:6px}
         <span class="spacer"></span>
         <span class="status" id="status"></span>
       </div>
+      <div class="assist" id="assist"></div>
+      <div class="hbox" id="learnBox"></div>
+      <div class="hbox" id="hintBox"></div>
+      <div class="hbox" id="solBox"></div>
       <div class="results" id="results"></div>
     </section>
   </div>
@@ -1787,6 +1822,91 @@ const EX = [
    hint: '`Collectors.collectingAndThen(Collectors.toList(), list -> ...)` te laisse retravailler chaque groupe avec un nouveau stream.'},
 ];
 EX.forEach((e, i) => { e.n = i + 1; if (!e.start) e.start = e.data[0] + '.stream()\n    '; });
+/* ---------------- « À savoir » : une notion expliquée par exercice ---------------- */
+const LEARN = {
+  'long-words': {t: 'filter', d: '`filter` garde les éléments pour lesquels la condition (le prédicat) renvoie `true` et jette les autres. L\'ordre d\'origine est conservé.',
+    ex: 'Stream.of(3, 8, 1, 6)\n    .filter(n -> n > 2)\n    .toList()'},
+  'upper': {t: 'map', d: '`map` applique une fonction à chaque élément et le remplace par le résultat. Il y a autant d\'éléments en sortie qu\'en entrée. Une lambda `x -> x.methode()` peut s\'écrire `Type::methode` : c\'est une référence de méthode.',
+    ex: 'Stream.of("a", "bcd", "ef")\n    .map(String::length)\n    .toList()'},
+  'evens': {t: 'Le modulo %', d: '`%` donne le reste de la division entière : `7 % 2` vaut 1, `8 % 2` vaut 0. Avec `filter`, c\'est l\'outil classique pour garder une catégorie de nombres (pairs, multiples de 3...).',
+    ex: 'Stream.of(3, 4, 9, 10, 12)\n    .filter(n -> n % 3 == 0)\n    .toList()'},
+  'squares': {t: 'Calculer avec map', d: 'La lambda de `map` reçoit un élément et renvoie ce que tu veux : un calcul, une String, un autre objet. Le type du stream peut changer au passage.',
+    ex: 'Stream.of(1, 2, 3)\n    .map(n -> n * 10)\n    .toList()'},
+  'it-names': {t: 'Enchaîner les étapes', d: 'Un stream se lit de haut en bas : on peut enchaîner autant d\'étapes que nécessaire. Ici on filtre des objets, puis on les remplace par une de leurs propriétés. Pour comparer des String, utilise toujours `equals` : `==` compare les références, pas le contenu.',
+    ex: 'Stream.of("BUY", "SELL", "BUY")\n    .filter(s -> s.equals("BUY"))\n    .map(String::toLowerCase)\n    .toList()'},
+  'count-s': {t: 'count et les opérations terminales', d: 'Les étapes comme `filter` ou `map` ne font rien tant qu\'il n\'y a pas d\'opération terminale. `count()` en est une : elle déclenche le calcul et renvoie le nombre d\'éléments, sous forme de `long`.',
+    ex: 'Stream.of("pomme", "kiwi", "poire")\n    .filter(s -> s.startsWith("p"))\n    .count()'},
+  'sorted': {t: 'sorted', d: '`sorted()` sans argument trie selon l\'ordre naturel : croissant pour les nombres, alphabétique pour les String (attention, les majuscules passent avant les minuscules).',
+    ex: 'Stream.of("kiwi", "Banane", "abricot")\n    .sorted()\n    .toList()'},
+  'by-length': {t: 'Comparator.comparing et reversed', d: '`Comparator.comparing(f)` crée un comparateur qui classe les éléments selon la valeur renvoyée par `f`. `.reversed()` inverse l\'ordre. Le tri est stable : à égalité, l\'ordre d\'origine est conservé.',
+    ex: 'Stream.of("ccc", "a", "bb")\n    .sorted(Comparator.comparing(String::length))\n    .toList()'},
+  'top3': {t: 'Un « top n » avec limit', d: '`limit(n)` coupe le stream après n éléments. Après un tri décroissant, ça donne un classement. `comparingInt` est la version de `comparing` pour une clé de type `int`.',
+    ex: 'Stream.of(5, 12, 3, 9)\n    .sorted(Comparator.reverseOrder())\n    .limit(2)\n    .toList()'},
+  'distinct': {t: 'distinct', d: '`distinct()` retire les doublons en s\'appuyant sur `equals`. Il garde la première occurrence de chaque valeur, dans l\'ordre d\'arrivée.',
+    ex: 'Stream.of(2, 1, 2, 3, 1)\n    .distinct()\n    .toList()'},
+  'page2': {t: 'skip et limit', d: '`skip(n)` saute les n premiers éléments, `limit(n)` garde les n suivants. Ensemble, ils découpent une tranche du stream, comme une page de résultats.',
+    ex: 'Stream.of(10, 20, 30, 40, 50)\n    .skip(1)\n    .limit(2)\n    .toList()'},
+  'multi-sort': {t: 'thenComparing', d: '`thenComparing` ajoute un critère secondaire, utilisé seulement quand le premier critère donne une égalité. Un 2e argument permet de choisir l\'ordre de ce critère : `thenComparing(clé, Comparator.reverseOrder())`.',
+    ex: 'Stream.of("bb", "c", "aa", "b")\n    .sorted(Comparator.comparing(String::length)\n        .thenComparing(Comparator.naturalOrder()))\n    .toList()'},
+  'sum': {t: 'mapToInt et IntStream', d: 'Un `Stream<Integer>` contient des objets : il n\'a pas de `sum()`. `mapToInt` le convertit en `IntStream`, un stream spécialisé pour les `int`, qui propose `sum()`, `average()`, `max()` et `min()`.',
+    ex: 'Stream.of(4, 5, 6)\n    .mapToInt(n -> n)\n    .sum()'},
+  'it-payroll': {t: 'Filtrer, extraire, agréger', d: 'C\'est le schéma le plus courant en entreprise : on filtre les objets qui nous intéressent, on en extrait un nombre avec `mapToInt`, puis on agrège avec `sum()`.',
+    ex: 'Stream.of("a", "bb", "ccc")\n    .filter(s -> s.length() > 1)\n    .mapToInt(String::length)\n    .sum()'},
+  'avg-age': {t: 'average et OptionalDouble', d: '`average()` renvoie un `OptionalDouble`, pas un `double` : sur un stream vide, il n\'y a pas de moyenne. On récupère la valeur avec `orElse(valeurParDéfaut)` ou `getAsDouble()`.',
+    ex: 'IntStream.of(2, 4, 9)\n    .average()\n    .orElse(0)'},
+  'biggest-trade': {t: 'max avec un Comparator', d: 'Sur un stream d\'objets, `max` a besoin d\'un `Comparator` pour savoir quoi comparer. Il renvoie un `Optional`, qu\'on peut transformer avec `map` avant d\'en sortir la valeur.',
+    ex: 'Stream.of("kiwi", "ananas", "figue")\n    .max(Comparator.comparingInt(String::length))\n    .map(String::toUpperCase)\n    .orElse("")'},
+  'product': {t: 'reduce', d: '`reduce(identité, opération)` combine les éléments deux à deux. Il part de l\'identité, puis applique l\'opération avec chaque élément. L\'identité est la valeur neutre : 0 pour l\'addition, 1 pour la multiplication.',
+    ex: 'Stream.of(1, 2, 3, 4)\n    .reduce(0, (a, b) -> a + b)'},
+  'longest': {t: 'Égalités dans max et min', d: 'Quand plusieurs éléments ont la même valeur maximale, `max` garde le premier rencontré. `orElse` fournit une valeur de secours si le stream est vide.',
+    ex: 'Stream.of("aa", "bb", "c")\n    .max(Comparator.comparingInt(String::length))\n    .orElse("")'},
+  'any-big': {t: 'anyMatch', d: '`anyMatch` répond à la question « au moins un élément vérifie-t-il la condition ? ». Il s\'arrête dès qu\'il en trouve un : c\'est un court-circuit.',
+    ex: 'Stream.of(1, 5, 9)\n    .anyMatch(n -> n > 8)'},
+  'all-25': {t: 'allMatch', d: '`allMatch` répond à « tous les éléments vérifient-ils la condition ? ». Il s\'arrête au premier qui échoue. Piège classique : sur un stream vide, il renvoie `true`.',
+    ex: 'Stream.of(2, 4, 7)\n    .allMatch(n -> n % 2 == 0)'},
+  'first-20': {t: 'findFirst', d: '`findFirst()` renvoie le premier élément du stream dans un `Optional`, vide s\'il n\'y en a aucun. Placé après un `filter`, il donne « le premier qui correspond ».',
+    ex: 'Stream.of(3, 8, 12, 15)\n    .filter(n -> n > 10)\n    .findFirst()\n    .orElse(-1)'},
+  'none-z': {t: 'noneMatch', d: '`noneMatch` est l\'inverse de `anyMatch` : il renvoie `true` si aucun élément ne vérifie la condition.',
+    ex: 'Stream.of("java", "kotlin")\n    .noneMatch(s -> s.isEmpty())'},
+  'join': {t: 'Collectors.joining', d: '`Collectors.joining(sep)` colle des String entre elles avec un séparateur. Une autre version ajoute un préfixe et un suffixe.',
+    ex: 'Stream.of("a", "b", "c")\n    .collect(Collectors.joining(", ", "[", "]"))'},
+  'currencies': {t: 'Collectors.toSet', d: '`Collectors.toSet()` collecte dans un `Set` : une collection sans doublons, dont l\'ordre n\'est pas garanti.',
+    ex: 'Stream.of("EUR", "USD", "EUR")\n    .collect(Collectors.toSet())'},
+  'name-salary': {t: 'Collectors.toMap', d: '`Collectors.toMap(fonctionClé, fonctionValeur)` construit une Map : pour chaque élément, la première fonction donne la clé et la seconde la valeur. Chaque clé doit être unique.',
+    ex: 'Stream.of("java", "go")\n    .collect(Collectors.toMap(s -> s, String::length))'},
+  'qty-merge': {t: 'La fonction de fusion de toMap', d: 'Si deux éléments donnent la même clé, `toMap` lève une `IllegalStateException`. Le 3e argument dit comment combiner les deux valeurs : les additionner, garder la première, etc.',
+    ex: 'Stream.of("ab", "cd", "efg")\n    .collect(Collectors.toMap(String::length, s -> 1, Integer::sum))'},
+  'names-by-dept': {t: 'groupingBy et mapping', d: '`groupingBy(f)` range les éléments dans une Map : la clé est le résultat de `f`, la valeur est la liste des éléments du groupe. Un 2e argument, le collector « aval », transforme chaque groupe. `mapping(g, toList())` applique `g` à chaque élément avant de faire la liste.',
+    ex: 'Stream.of("a", "bb", "cc")\n    .collect(Collectors.groupingBy(String::length,\n        Collectors.mapping(String::toUpperCase, Collectors.toList())))'},
+  'count-by-dept': {t: 'Compter par groupe', d: 'Avec `Collectors.counting()` en aval, chaque groupe est remplacé par son nombre d\'éléments, de type `Long`.',
+    ex: 'Stream.of("a", "bb", "cc")\n    .collect(Collectors.groupingBy(String::length, Collectors.counting()))'},
+  'avg-by-dept': {t: 'Moyenne par groupe', d: '`averagingInt(f)` calcule la moyenne de `f` sur chaque groupe. Le résultat est toujours un `Double`, même si les valeurs sont des `int`.',
+    ex: 'Stream.of(1, 2, 3, 4)\n    .collect(Collectors.groupingBy(n -> n % 2 == 0,\n        Collectors.averagingInt(n -> n)))'},
+  'buy-sell': {t: 'partitioningBy', d: '`partitioningBy(prédicat)` est un `groupingBy` spécial qui coupe en deux : la clé `true` pour les éléments qui vérifient le prédicat, `false` pour les autres. La Map contient toujours les deux clés, même si un groupe est vide. Comme `groupingBy`, il accepte un collector aval.',
+    ex: 'Stream.of(1, 2, 3, 4, 5)\n    .collect(Collectors.partitioningBy(n -> n % 2 == 0))'},
+  'notional-by-trader': {t: 'Somme par groupe', d: '`summingDouble(f)` additionne `f` sur chaque groupe. Il existe aussi `summingInt` et `summingLong` selon le type de la valeur.',
+    ex: 'Stream.of("a", "bb", "cc")\n    .collect(Collectors.groupingBy(String::length,\n        Collectors.summingDouble(s -> 1.5)))'},
+  'all-words': {t: 'flatMap', d: '`flatMap` transforme chaque élément en un stream, puis met tous ces streams bout à bout. Là où `map` donnerait un stream de listes, `flatMap` donne un seul stream à plat.',
+    ex: 'Stream.of(List.of(1, 2), List.of(3))\n    .flatMap(List::stream)\n    .toList()'},
+  'euler': {t: 'IntStream.range et rangeClosed', d: '`IntStream.range(a, b)` génère les entiers de a à b exclu, `rangeClosed(a, b)` de a à b inclus. Pratique pour remplacer une boucle `for`.',
+    ex: 'IntStream.rangeClosed(1, 4)\n    .sum()'},
+  'squares-range': {t: 'boxed', d: 'Un `IntStream` manipule des `int` primitifs : il n\'a ni `toList()` ni `collect(Collectors...)`. `boxed()` convertit chaque `int` en `Integer` pour revenir à un `Stream<Integer>`.',
+    ex: 'IntStream.range(0, 3)\n    .boxed()\n    .toList()'},
+  'letters': {t: 'Découper une String en caractères', d: '`s.split("")` découpe une String en caractères, dans un tableau. `Arrays.stream(tableau)` en fait un stream. `Collectors.joining()` sans argument recolle tout sans séparateur.',
+    ex: 'Arrays.stream("java".split(""))\n    .distinct()\n    .collect(Collectors.joining())'},
+  'word-freq': {t: 'Function.identity', d: '`Function.identity()` est la fonction qui renvoie l\'élément tel quel, comme `x -> x`. Dans `groupingBy`, elle groupe les éléments par leur propre valeur : idéal pour compter les doublons.',
+    ex: 'Stream.of("a", "b", "a")\n    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))'},
+  'top-trader': {t: 'Parcourir une Map avec entrySet', d: 'Une Map n\'a pas de `stream()`, mais `map.entrySet().stream()` donne un stream de paires clé/valeur (`Map.Entry`). `Map.Entry.comparingByValue()` compare ces paires selon leur valeur, et `Map.Entry::getKey` récupère la clé.',
+    ex: 'Map.of("a", 3, "b", 7).entrySet().stream()\n    .max(Map.Entry.comparingByValue())\n    .map(Map.Entry::getKey)\n    .orElse("")'},
+  'best-dept': {t: 'Le schéma en deux temps', d: 'Beaucoup de questions « quel groupe a le plus de... ? » se résolvent en deux streams : un premier pour construire une Map groupe → valeur, un second sur `entrySet()` pour trouver la meilleure entrée.',
+    ex: 'Stream.of("a", "bb", "cc")\n    .collect(Collectors.groupingBy(String::length, Collectors.counting()))\n    .entrySet().stream()\n    .max(Map.Entry.comparingByValue())\n    .map(Map.Entry::getKey)\n    .orElse(0)'},
+  'net-position': {t: 'Une lambda conditionnelle en aval', d: 'Le collector aval accepte n\'importe quelle lambda. Avec un ternaire `condition ? a : b`, on choisit la valeur à additionner selon l\'élément.',
+    ex: 'Stream.of(5, -2, 8, -1)\n    .collect(Collectors.summingInt(n -> n > 0 ? n : 0))'},
+  'top2-by-class': {t: 'collectingAndThen', d: '`collectingAndThen(collector, f)` applique `f` au résultat d\'un collector. Avec `toList()`, `f` reçoit la liste de chaque groupe : on peut relancer un stream dessus pour trier, couper ou transformer.',
+    ex: 'Stream.of("a", "bb", "cc", "dd")\n    .collect(Collectors.groupingBy(String::length,\n        Collectors.collectingAndThen(Collectors.toList(), List::size)))'},
+};
+EX.forEach(e => { e.learn = LEARN[e.id]; });
+
 const SANDBOX = {id: 'sandbox', ch: -1, title: 'Bac à sable', data: ['words', 'nums', 'employees', 'trades', 'sentences', 'n'], ret: 'var',
   prompt: 'Écris ce que tu veux avec toutes les données disponibles. Pas de correction ici : le résultat et le type sont simplement affichés. `System.out.println` marche aussi dans un `forEach` ou un `peek`.',
   start: 'trades.stream()\n    .filter(t -> t.getAssetClass().equals("EQUITY"))\n    .collect(Collectors.groupingBy(Trade::getTrader, Collectors.counting()))'};
@@ -1885,19 +2005,28 @@ function renderBrief(){
   if (!isSand){
     h += `<div class="label">Données (test visible)</div><pre class="ctx">${highlight(contextCode(ex))}</pre>`;
     for (const v of ex.data) if (CLASSES[v]) h += `<div class="label">Modèle</div><pre class="ctx">${highlight(CLASSES[v])}</pre><details class="data"${matchMedia('(max-width: 860px)').matches ? '' : ' open'}><summary>Voir les ${PACKS[v][0].length} ${v === 'trades' ? 'trades' : 'employés'}</summary>${table(v)}</details>`;
-    h += `<div class="helpers"><button class="ghost" id="hintBtn">${P.hint[ex.id] ? 'Indice' : 'Afficher un indice'}</button><button class="ghost" id="solBtn">Voir la solution</button></div>`;
-    h += `<div id="hintBox"></div><div id="solBox"></div>`;
   } else {
     h += `<div class="label">Données disponibles</div><pre class="ctx">${highlight('List<String>   words;      // ' + PACKS.words[0].length + ' mots\nList<Integer>  nums;       // ' + PACKS.nums[0].length + ' entiers\nList<String>   sentences;  // ' + PACKS.sentences[0].length + ' phrases\nList<Employee> employees;  // ' + PACKS.employees[0].length + ' employés\nList<Trade>    trades;     // ' + PACKS.trades[0].length + ' trades\nint            n;          // ' + PACKS.n[0])}</pre>`;
     h += `<div class="label">Modèle</div><pre class="ctx">${highlight(CLASSES.employees + '\n\n' + CLASSES.trades)}</pre>${table('employees')}${table('trades')}`;
   }
   $('#briefPane').innerHTML = h;
+  ['learnBox', 'hintBox', 'solBox'].forEach(id => { $('#' + id).innerHTML = ''; });
+  $('#assist').classList.remove('nudge'); $('#assist').hidden = false;
+  $('#assist').innerHTML = isSand ? '' : `<span class="assist-q" id="assistQ">Besoin d'aide ?</span>${ex.learn ? `<button id="learnBtn" aria-expanded="false">La notion</button>` : ''}<button id="hintBtn">Un indice<small>${P.hint[ex.id] ? 'déjà vu' : '−40 % XP'}</small></button><button class="sol" id="solBtn">La solution</button>`;
   if (!isSand){
     if (P.hint[ex.id]) showHint();
     $('#hintBtn').onclick = showHint;
+    if (ex.learn) $('#learnBtn').onclick = () => {
+      const box = $('#learnBox');
+      if (box.innerHTML){ box.innerHTML = ''; $('#learnBtn').setAttribute('aria-expanded', 'false'); return; }
+      const r = evalSafe(ex.learn.ex, {});
+      const title = /^[\w.]+$/.test(ex.learn.t) ? `<code>${esc(ex.learn.t)}</code>` : esc(ex.learn.t);
+      box.innerHTML = `<div class="learn"><div class="learn-h"><span>À savoir</span> ${title}</div><p>${md(ex.learn.d)}</p><div class="learn-ex"><pre class="ctx">${highlight(ex.learn.ex)}</pre><div class="learn-out"><span>Résultat</span><code>${esc(r.err ? r.err.msg : jstr(r.v))}</code></div></div></div>`;
+      $('#learnBtn').setAttribute('aria-expanded', 'true');
+    };
     let armed = false;
     $('#solBtn').onclick = () => {
-      if (!P.solved[ex.id] && !armed){ armed = true; $('#solBtn').textContent = 'Confirmer : pas d\'XP pour cet exercice'; $('#solBtn').classList.add('warn'); return; }
+      if (!P.solved[ex.id] && !armed){ armed = true; $('#solBtn').textContent = 'Confirmer : 0 XP pour ce défi'; $('#solBtn').classList.add('warn'); return; }
       P.sol[ex.id] = true; save(); renderNav();
       $('#solBox').innerHTML = `<div class="label">Solution</div><pre class="ctx">${highlight(ex.sol)}</pre><div class="helpers" style="margin-top:10px"><button class="ghost" id="copySol">La copier dans l'éditeur</button></div>`;
       $('#solBtn').hidden = true;
@@ -2178,7 +2307,7 @@ function run(){
     const nextLabel = idx + 1 < EX.length ? 'Exercice suivant' : 'Bac à sable';
     h += `<div class="win"><div><b>${first ? 'Validé' : 'Toujours bon'}</b><div class="status">2 tests sur 2 passés${P.sol[ex.id] ? ', solution consultée' : P.hint[ex.id] ? ', avec indice' : ''}</div></div><span class="gain">${first ? '+' + gain + ' XP' : ''}</span><span class="spacer"></span><button class="run" id="nextBtn">${nextLabel} <kbd>Ctrl ↵</kbd></button></div>`;
     lastWin = true;
-  } else lastWin = false;
+  } else { lastWin = false; const q = $('#assistQ'); if (q){ $('#assist').classList.add('nudge'); q.textContent = 'Bloqué ?'; } }
   runs.forEach((r, t) => {
     const hidden = t === 1;
     h += `<div class="test ${r.pass ? 'pass' : 'fail'}"><div class="test-head"><span class="mk">${r.pass ? '✓' : '✗'}</span>Test ${t + 1}<small>${hidden ? 'données cachées' : 'données visibles'}</small></div>`;
@@ -2193,7 +2322,13 @@ function run(){
     h += '</div>';
   });
   res.innerHTML = h;
-  if (allPass){ const nb = $('#nextBtn'); nb.onclick = () => go(idx + 1); updateHeader(); renderNav(); renderBriefPills(); }
+  if (allPass){
+    const nb = $('#nextBtn'); nb.onclick = () => go(idx + 1); updateHeader(); renderNav(); renderBriefPills();
+    // défi réussi : on range l'aide pour que « Exercice suivant » arrive juste sous « Exécuter »
+    ['learnBox', 'hintBox', 'solBox'].forEach(id => { $('#' + id).innerHTML = ''; });
+    $('#assist').hidden = true;
+    $('.win').scrollIntoView({block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+  }
 }
 function renderBriefPills(){ const ex = ALL[idx]; const s = P.solved[ex.id]; const pills = document.querySelector('.pills'); if (pills && s && !pills.textContent.includes('résolu')) pills.insertAdjacentHTML('beforeend', `<span class="pill" style="color:var(--ok);border-color:var(--ok)">résolu · ${s.xp} XP</span>`); }
 
