@@ -1,0 +1,2258 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stream Dojo : entraîne-toi aux Streams Java</title>
+<meta name="description" content="40 défis pour maîtriser les Streams Java : filter, map, collect, groupingBy... Gratuit, dans le navigateur, corrigé instantanément.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2310151D'/%3E%3Cpath d='M5 9h7l4 7-4 7H5' fill='none' stroke='%23FF8545' stroke-width='2.6' stroke-linejoin='round'/%3E%3Cpath d='M17 9h4l4 7-4 7h-4' fill='none' stroke='%23E4E8EE' stroke-width='2.6' stroke-linejoin='round' opacity='.6'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#10151D">
+<link rel="canonical" href="https://mathbruu.github.io/stream-dojo/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Stream Dojo">
+<meta property="og:title" content="Stream Dojo : 40 défis pour maîtriser les Streams Java">
+<meta property="og:description" content="40 défis pour maîtriser les Streams Java : filter, map, collect, groupingBy... Gratuit, dans le navigateur, corrigé instantanément.">
+<meta property="og:url" content="https://mathbruu.github.io/stream-dojo/">
+<meta property="og:image" content="https://mathbruu.github.io/stream-dojo/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+<!-- Statistiques d'audience : GoatCounter (sans cookie) -->
+<script data-goatcounter="https://mathbruu.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: IDE-style three panes (exercise list | brief | workbench), collapsing to one column on phones */
+:root{
+  --bg:#E9ECF1; --panel:#FFFFFF; --panel-2:#F4F6F9; --ink:#17202C; --muted:#5A6676; --line:#D3D9E1;
+  --accent:#C9501A; --accent-soft:#FBE7DC; --accent-ink:#FFFFFF;
+  --ok:#1C7F55; --ok-soft:#DDF2E8; --bad:#B9324A; --bad-soft:#F9E1E5; --warn:#9A6A12; --warn-soft:#F8EED6;
+  --code-bg:#F6F7FA; --sx-k:#8B3FAF; --sx-s:#1E7A4B; --sx-n:#B4561A; --sx-m:#2453B5; --sx-t:#0B7287; --sx-c:#8A93A0;
+  --f-display:"Bricolage Grotesque", "IBM Plex Sans", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --r:10px; --shadow:0 12px 32px rgba(23,32,44,.16);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#10151D; --panel:#171D27; --panel-2:#1C2330; --ink:#E4E8EE; --muted:#97A1AF; --line:#2A3240;
+  --accent:#FF8545; --accent-soft:#3A2418; --accent-ink:#1A0E07;
+  --ok:#52C78E; --ok-soft:#173327; --bad:#FF7088; --bad-soft:#3A1C24; --warn:#E6B450; --warn-soft:#352A14;
+  --code-bg:#131923; --sx-k:#C792EA; --sx-s:#A3D9A5; --sx-n:#F7A66B; --sx-m:#82AAFF; --sx-t:#5FD0E6; --sx-c:#677385; --shadow:0 14px 36px rgba(0,0,0,.5);
+  color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#10151D; --panel:#171D27; --panel-2:#1C2330; --ink:#E4E8EE; --muted:#97A1AF; --line:#2A3240;
+  --accent:#FF8545; --accent-soft:#3A2418; --accent-ink:#1A0E07;
+  --ok:#52C78E; --ok-soft:#173327; --bad:#FF7088; --bad-soft:#3A1C24; --warn:#E6B450; --warn-soft:#352A14;
+  --code-bg:#131923; --sx-k:#C792EA; --sx-s:#A3D9A5; --sx-n:#F7A66B; --sx-m:#82AAFF; --sx-t:#5FD0E6; --sx-c:#677385; --shadow:0 14px 36px rgba(0,0,0,.5);
+  color-scheme:dark; }
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);margin:0}
+code,pre,kbd,textarea{font-family:var(--f-mono)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.app{display:flex;flex-direction:column;min-height:100%}
+header.top{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:700;font-size:20px;letter-spacing:-.01em}
+.brand svg{flex:none}
+.brand small{font-family:var(--f-mono);font-weight:400;font-size:12px;color:var(--muted);letter-spacing:0}
+.meter{flex:1;min-width:180px;display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:8px;background:var(--panel-2);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .5s ease}
+.meter span{font:500 13px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rank{display:flex;align-items:baseline;gap:8px;font-variant-numeric:tabular-nums}
+.rank b{font-family:var(--f-display);font-size:18px}
+.rank em{font-style:normal;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600}
+
+.grid{flex:1;display:grid;grid-template-columns:250px minmax(0,1fr) minmax(0,1.2fr);min-height:0}
+nav.list{border-right:1px solid var(--line);background:var(--panel);overflow:auto;padding:12px 10px 40px}
+.chap{margin-bottom:10px}
+.chap h3{margin:12px 8px 4px;font:600 11px var(--f-body);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);display:flex;justify-content:space-between}
+.chap h3 span{font-family:var(--f-mono);letter-spacing:0}
+.item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;padding:6px 8px;border-radius:7px;font-size:14px;color:var(--ink)}
+.item:hover{background:var(--panel-2)}
+.item[aria-current="true"]{background:var(--accent-soft);color:var(--ink);font-weight:500}
+.dot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--line);flex:none;display:grid;place-items:center}
+.dot.done{background:var(--ok);border-color:var(--ok)}
+.dot.done::after{content:"";width:6px;height:3px;border:solid var(--panel);border-width:0 0 2px 2px;transform:translate(0,-1px) rotate(-45deg)}
+.dot.helped{background:var(--warn);border-color:var(--warn)}
+.dot.helped::after{content:"";width:6px;height:3px;border:solid var(--panel);border-width:0 0 2px 2px;transform:translate(0,-1px) rotate(-45deg)}
+.dot.seen{border-color:var(--warn);border-style:dashed}
+.item .n{font:12px var(--f-mono);color:var(--muted);width:20px;flex:none;font-variant-numeric:tabular-nums}
+
+section.brief{padding:22px 26px 40px;overflow:auto;min-width:0;border-right:1px solid var(--line)}
+.picker{display:none;margin-bottom:14px}
+.picker select{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel);font:inherit;color:var(--ink)}
+.eyebrow{font:600 12px var(--f-body);text-transform:uppercase;letter-spacing:.09em;color:var(--accent)}
+h1{font-family:var(--f-display);font-weight:700;font-size:30px;line-height:1.15;margin:4px 0 10px;letter-spacing:-.015em;text-wrap:balance}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pill{font:500 12px var(--f-mono);padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted);background:var(--panel)}
+.pill.xp{color:var(--accent);border-color:var(--accent)}
+.prompt{font-size:16px;max-width:62ch;margin:0 0 18px}
+.prompt code,.hint code,.memo code{background:var(--code-bg);border:1px solid var(--line);padding:0 5px;border-radius:5px;font-size:.88em}
+.label{font:600 11px var(--f-body);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:22px 0 8px}
+.ctx{background:var(--code-bg);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;font-size:13px;line-height:1.6;overflow-x:auto;margin:0;white-space:pre}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);margin-top:10px}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:5px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:600 11px var(--f-mono);color:var(--muted);background:var(--panel-2)}
+td{font-family:var(--f-mono)}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right}
+.helpers{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.ghost{border:1px solid var(--line);background:var(--panel);padding:7px 12px;border-radius:8px;font-size:14px}
+.ghost:hover{border-color:var(--muted)}
+.ghost.warn{border-color:var(--warn);color:var(--warn)}
+.hint{margin-top:12px;padding:12px 14px;border-radius:var(--r);background:var(--warn-soft);border:1px solid var(--warn);font-size:14px;max-width:62ch}
+.solution{margin-top:12px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin:0 0 18px}
+.tab{border:0;background:none;padding:8px 12px;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:500}
+.memo h4{font:600 13px var(--f-body);margin:18px 0 6px}
+.memo h4:first-child{margin-top:0}
+.memo dl{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:4px 14px;margin:0;font-size:13.5px}
+.memo dt{font-family:var(--f-mono);font-size:12.5px;overflow-wrap:anywhere}
+.memo dd{margin:0;color:var(--muted)}
+.memo p{font-size:13.5px;color:var(--muted);max-width:62ch}
+
+section.bench{display:flex;flex-direction:column;gap:14px;padding:22px 24px 40px;overflow:auto;min-width:0;background:var(--panel-2)}
+.editorbox{border:1px solid var(--line);border-radius:var(--r);background:var(--code-bg)}
+.edhead{border-radius:var(--r) var(--r) 0 0;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 12px;border-bottom:1px solid var(--line);background:var(--panel);font:12px var(--f-mono);color:var(--muted);flex-wrap:wrap}
+.sig{padding:12px 14px 0;font:14px/1.6 var(--f-mono);color:var(--muted);overflow-wrap:anywhere}
+.sig .t{color:var(--sx-t)}
+.ed{display:grid;position:relative}
+.ed > pre,.ed > textarea,.ed > .mirror{grid-area:1/1;margin:0;padding:4px 14px 16px 30px;font:14px/1.6 var(--f-mono);white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;tab-size:4;border:0;min-height:190px}
+.ed pre{pointer-events:none;color:var(--ink)}
+.ed .mirror{visibility:hidden;pointer-events:none}
+.ac{position:absolute;z-index:20;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);font:13px/1.4 var(--f-mono);overflow:hidden}
+.ac ul{list-style:none;margin:0;padding:4px;max-height:236px;overflow:auto}
+.ac li{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:5px;cursor:pointer;white-space:nowrap;min-width:0}
+.ac li[aria-selected="true"]{background:var(--accent-soft)}
+.ak{width:16px;height:16px;border-radius:4px;display:grid;place-items:center;font-size:10px;font-weight:600;flex:none;color:var(--panel)}
+.ak-m{background:var(--sx-k)} .ak-f{background:var(--sx-t)} .ak-c{background:var(--sx-n)} .ak-v{background:var(--sx-m)}
+.an{color:var(--ink);font-weight:600}
+.ap{color:var(--muted);overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ar{margin-left:auto;color:var(--sx-t);padding-left:10px;font-size:12px}
+.ad{border-top:1px solid var(--line);padding:7px 10px;font:12.5px/1.45 var(--f-body);color:var(--muted);white-space:normal}
+.ed textarea{resize:none;background:transparent;color:transparent;caret-color:var(--accent);overflow:hidden;outline:none}
+.ed textarea::selection{background:color-mix(in srgb,var(--accent) 30%,transparent);color:transparent}
+.editorbox:focus-within{border-color:var(--accent)}
+.sx-k{color:var(--sx-k)} .sx-s{color:var(--sx-s)} .sx-n{color:var(--sx-n)} .sx-m{color:var(--sx-m)} .sx-t{color:var(--sx-t)} .sx-c{color:var(--sx-c);font-style:italic} .sx-o{color:var(--accent)}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.run{background:var(--accent);color:var(--accent-ink);border:0;padding:10px 18px;border-radius:8px;font-weight:600;display:inline-flex;gap:10px;align-items:center}
+.run:hover{filter:brightness(1.07)}
+.run kbd{font-size:11px;opacity:.8;border:1px solid currentColor;border-radius:4px;padding:0 4px}
+.actions .spacer{flex:1}
+.status{font-size:13px;color:var(--muted)}
+
+.results{display:flex;flex-direction:column;gap:10px}
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:18px;color:var(--muted);font-size:14px}
+.empty small{display:block;margin-top:8px;font-size:12.5px}
+[hidden]{display:none!important}
+.beta{font:600 10px var(--f-body);text-transform:uppercase;letter-spacing:.1em;color:var(--accent);border:1px solid var(--accent);border-radius:99px;padding:1px 7px;align-self:center}
+.intro{max-width:62ch;margin:0 0 16px;padding:10px 14px;border:1px solid var(--line);background:var(--panel-2);border-radius:8px;font-size:14px;color:var(--muted)}
+.intro b{color:var(--ink);font-weight:600;margin-right:4px}
+.intro code{background:var(--code-bg);border:1px solid var(--line);padding:0 5px;border-radius:5px;font-size:.88em;color:var(--ink)}
+details.data{margin-top:10px}
+details.data summary{cursor:pointer;font-size:13px;color:var(--muted);padding:4px 0}
+details.data[open] summary{margin-bottom:2px}
+details.data .tablewrap{margin-top:6px}
+.foot{display:flex;justify-content:space-between;gap:8px 20px;flex-wrap:wrap;padding:10px 20px;border-top:1px solid var(--line);background:var(--panel);font-size:12.5px;color:var(--muted)}
+.foot a{color:var(--accent)}
+.linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:inherit;text-decoration:underline;text-underline-offset:2px}
+.linkbtn:hover{color:var(--ink)}
+.welcome{position:fixed;inset:0;z-index:50;background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(6px);display:grid;grid-template-columns:minmax(0,560px);place-content:center;padding:16px;overflow:auto}
+.wcard{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);max-width:560px;width:100%;padding:28px 28px 24px;animation:pop .3s ease}
+.wcard .brand{margin-bottom:18px}
+.wcard h2{font:700 28px/1.15 var(--f-display);letter-spacing:-.015em;margin:0 0 16px;text-wrap:balance}
+.wcard ul{margin:0 0 18px;padding:0;list-style:none;display:grid;gap:10px}
+.wcard li{padding-left:22px;position:relative;font-size:15px}
+.wcard li::before{content:"";position:absolute;left:4px;top:.6em;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+.wcard li code{background:var(--code-bg);border:1px solid var(--line);padding:0 5px;border-radius:5px;font-size:.88em}
+.wcode{margin-bottom:14px;font-size:12.5px}
+.wnote{font-size:13px;color:var(--muted);margin:0 0 18px}
+.wact{display:flex;gap:10px;flex-wrap:wrap}
+@media (prefers-reduced-motion: reduce){ .wcard{animation:none} }
+@media (hover: none){ .edhead span:last-child, .run kbd{display:none} }
+.test{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
+.test-head{display:flex;align-items:center;gap:10px;padding:9px 14px;font-weight:500;font-size:14px}
+.test-head .mk{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:700 13px var(--f-mono);flex:none}
+.test.pass .mk{background:var(--ok-soft);color:var(--ok)}
+.test.fail .mk{background:var(--bad-soft);color:var(--bad)}
+.test-head small{margin-left:auto;color:var(--muted);font-size:12px;font-weight:400}
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));border-top:1px solid var(--line)}
+.cmp > div{padding:10px 14px;min-width:0}
+.cmp > div + div{border-left:1px solid var(--line)}
+.cmp .lbl{display:flex;justify-content:space-between;gap:8px;font:600 11px var(--f-body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+.cmp .lbl code{font:400 11px var(--f-mono);text-transform:none;letter-spacing:0;color:var(--sx-t)}
+.cmp pre{margin:0;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.err{border-top:1px solid var(--line);padding:10px 14px;background:var(--bad-soft);font-size:14px}
+.err pre{margin:6px 0 0;font-size:12px;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
+.out{border-top:1px solid var(--line);padding:8px 14px;font-size:12.5px}
+.out pre{margin:4px 0 0;white-space:pre-wrap;color:var(--muted)}
+.note{padding:10px 14px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.win{border:1px solid var(--ok);background:var(--ok-soft);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;animation:pop .35s ease}
+.win b{font-family:var(--f-display);font-size:18px}
+.win .gain{font:600 14px var(--f-mono);color:var(--ok)}
+.win .spacer{flex:1}
+@keyframes pop{from{transform:translateY(6px);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){ .win{animation:none} .bar i{transition:none} }
+
+@media (max-width:1180px){
+  .grid{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+  nav.list{display:none}
+  .picker{display:block}
+}
+@media (max-width:860px){
+  .wcard{padding:22px 18px 18px} .wcard h2{font-size:24px}
+  .grid{grid-template-columns:minmax(0,1fr)}
+  section.brief{border-right:0;border-bottom:1px solid var(--line);padding:18px 16px 24px}
+  section.bench{padding:18px 16px 40px}
+  header.top{padding:10px 16px;gap:10px 16px}
+  h1{font-size:25px}
+  .meter{order:3;flex-basis:100%}
+  header.top{position:static}
+  .brand small{display:none}
+  .ed > pre,.ed > textarea,.ed > .mirror{font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><path d="M1 4h8l4 7-4 7H1" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round"/><path d="M15 4h6l4 7-4 7h-6" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".55"/></svg>
+      Stream Dojo <small>java.util.stream</small><span class="beta">bêta</span>
+    </div>
+    <div class="meter"><div class="bar"><i id="bar"></i></div><span id="count">0 / 0</span></div>
+    <div class="rank"><em id="rankName">Stagiaire</em><b id="xp">0</b><span class="status">XP</span></div>
+  </header>
+
+  <div class="grid">
+    <nav class="list" id="nav" aria-label="Exercices"></nav>
+
+    <section class="brief">
+      <div class="picker"><label class="label" for="picker" style="display:block;margin:0 0 6px">Exercice</label><select id="picker"></select></div>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tabBrief" aria-selected="true">Énoncé</button>
+        <button class="tab" role="tab" id="tabMemo" aria-selected="false">Mémo Streams</button>
+      </div>
+      <div id="briefPane"></div>
+      <div id="memoPane" class="memo" hidden></div>
+    </section>
+
+    <section class="bench">
+      <div class="editorbox">
+        <div class="edhead"><span>Solution.java</span><span>Ctrl+Espace : suggestions · Ctrl+Entrée : exécuter</span></div>
+        <div class="sig" id="sig"></div>
+        <div class="ed">
+          <pre id="hl" aria-hidden="true"></pre>
+          <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Ton code Java"></textarea>
+          <div class="mirror" id="mirror" aria-hidden="true"></div>
+          <div class="ac" id="ac" hidden></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="run" id="runBtn">Exécuter <kbd>Ctrl ↵</kbd></button>
+        <button class="ghost" id="resetBtn">Réinitialiser</button>
+        <span class="spacer"></span>
+        <span class="status" id="status"></span>
+      </div>
+      <div class="results" id="results"></div>
+    </section>
+  </div>
+  <footer class="foot">
+    <span>Simulateur Java dans le navigateur, solutions vérifiées avec le JDK 21. Pas une JVM : signale-moi tout écart.</span>
+    <span><button class="linkbtn" id="aboutBtn">À propos</button> · <button class="linkbtn" id="resetAll">Effacer ma progression</button> · <span id="author">Réalisé par <a href="https://www.linkedin.com/in/mathisbruyere/" target="_blank" rel="noopener">Mathis</a></span></span>
+  </footer>
+</div>
+<div class="welcome" id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="wTitle">
+  <div class="wcard">
+    <div class="brand"><svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><path d="M1 4h8l4 7-4 7H1" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round"/><path d="M15 4h6l4 7-4 7h-6" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".55"/></svg>Stream Dojo<span class="beta">bêta</span></div>
+    <h2 id="wTitle">Entraîne-toi aux Streams Java, un défi après l'autre.</h2>
+    <ul>
+      <li><b>40 défis en 8 chapitres</b>, du premier <code>filter</code> au <code>groupingBy</code> imbriqué.</li>
+      <li><b>Corrigé tout de suite</b> sur les données affichées, puis sur un jeu caché pour éviter les valeurs codées en dur.</li>
+      <li><b>Aide quand tu bloques</b> : autocomplétion façon IDE, erreurs expliquées, indices.</li>
+    </ul>
+    <pre class="ctx wcode"></pre>
+    <p class="wnote">Rien à installer, pas de compte. Ta progression reste dans ton navigateur. Le code tourne dans un simulateur Java, vérifié avec le JDK 21.</p>
+    <div class="wact"><button class="run" id="wStart">Commencer le premier défi</button><button class="ghost" id="wSand">Explorer le bac à sable</button></div>
+  </div>
+</div>
+
+<script id="engine">
+/* =====================================================================
+   Mini runtime Java : transpile un sous-ensemble de Java (lambdas,
+   références de méthode, Streams, Collectors, Comparator, Optional)
+   vers du JS, puis l'exécute sur des données Java simulées.
+   ===================================================================== */
+class JErr extends Error {}
+const def = (proto, name, fn) => Object.defineProperty(proto, name, {value: fn, configurable: true, writable: true, enumerable: false});
+
+// Double "boxé" : un objet Number, pour distinguer 2.0 de 2 à l'affichage
+const D = x => new Number(x);
+const num = v => (v instanceof Number ? v.valueOf() : v);
+const isNumLike = v => typeof v === 'number' || v instanceof Number;
+
+let BUDGET = 0;
+function tick(){ if (++BUDGET > 2e6) throw new JErr("Trop d'éléments traités : ton stream est peut-être infini (pense à limit())."); }
+let OUT = [];
+
+function cmpNat(a, b){
+  a = num(a); b = num(b);
+  if (a === null || a === undefined || b === null || b === undefined) throw new JErr('NullPointerException pendant une comparaison');
+  if (typeof a === 'number' && typeof b === 'number') return a < b ? -1 : a > b ? 1 : 0;
+  if (typeof a === 'string' && typeof b === 'string') return strCmp(a, b);
+  if (typeof a === 'boolean' && typeof b === 'boolean') return (a ? 1 : 0) - (b ? 1 : 0);
+  if (a && typeof a.compareTo === 'function') return a.compareTo(b);
+  throw new JErr(`ClassCastException : ${a && a.constructor ? a.constructor.name : typeof a} n'est pas Comparable. Utilise un Comparator, par ex. Comparator.comparing(...)`);
+}
+function strCmp(a, b){ const n = Math.min(a.length, b.length); for (let i = 0; i < n; i++){ const d = a.charCodeAt(i) - b.charCodeAt(i); if (d) return d; } return a.length - b.length; }
+const mkCmp = f => { f.__cmp = true; return f; };
+function strictCmp(c, where){
+  if (typeof c !== 'function' || !(c.__cmp || c.length === 2)) throw new JErr(`${where} attend un Comparator (deux paramètres), par ex. Comparator.comparing(Trade::getNotional) ou (a, b) -> ...`);
+  return c;
+}
+function toCmp(k, c){
+  if (typeof k !== 'function') throw new JErr('Un Comparator ou une fonction était attendu ici.');
+  if (k.__cmp || k.length === 2) return k;
+  return Comparator.comparing(k, c);
+}
+
+/* ---------------- Optional ---------------- */
+const OPT_NAMES = {obj:'Optional', int:'OptionalInt', long:'OptionalLong', double:'OptionalDouble'};
+const OPT_GET = {obj:'get', int:'getAsInt', long:'getAsLong', double:'getAsDouble'};
+class JOptional {
+  constructor(v, kind = 'obj'){ this.v = (v === null ? undefined : v); this.kind = kind; }
+  static empty(kind = 'obj'){ return new JOptional(undefined, kind); }
+  _w(x){ return this.kind === 'double' && typeof x === 'number' ? D(x) : x; }
+  _val(m){
+    if (OPT_GET[this.kind] !== m) throw new JErr(`${OPT_NAMES[this.kind]} n'a pas de ${m}() : utilise ${OPT_GET[this.kind]}().`);
+    if (this.v === undefined) throw new JErr('NoSuchElementException : No value present (l\'Optional est vide)');
+    return this.v;
+  }
+  get(){ return this._val('get'); }
+  getAsInt(){ return this._val('getAsInt'); }
+  getAsLong(){ return this._val('getAsLong'); }
+  getAsDouble(){ return this._val('getAsDouble'); }
+  isPresent(){ return this.v !== undefined; }
+  isEmpty(){ return this.v === undefined; }
+  orElse(o){ return this.v !== undefined ? this.v : this._w(o); }
+  orElseGet(f){ return this.v !== undefined ? this.v : this._w(f()); }
+  orElseThrow(f){ if (this.v === undefined){ if (f){ const x = f(); throw new JErr(x && x.__exc ? `${x.type}${x.msg ? ' : ' + x.msg : ''}` : 'Exception levée par orElseThrow'); } throw new JErr('NoSuchElementException : No value present'); } return this.v; }
+  ifPresent(f){ if (this.v !== undefined) f(this.v); }
+  ifPresentOrElse(f, g){ if (this.v !== undefined) f(this.v); else g(); }
+  _objOnly(m){ if (this.kind !== 'obj') throw new JErr(`${OPT_NAMES[this.kind]} n'a pas de méthode ${m}().`); }
+  map(f){ this._objOnly('map'); return this.v === undefined ? this : new JOptional(f(this.v)); }
+  flatMap(f){ this._objOnly('flatMap'); return this.v === undefined ? this : f(this.v); }
+  filter(p){ this._objOnly('filter'); return this.v === undefined || p(this.v) ? this : JOptional.empty(); }
+  stream(){ return JStream.fromArray(this.v === undefined ? [] : [this.v], this.kind); }
+  equals(o){ return deepEq(this, o); }
+}
+
+/* ---------------- Collections ---------------- */
+class Entry {
+  constructor(k, v){ this.k = k; this.v = v; }
+  getKey(){ return this.k; }
+  getValue(){ return this.v; }
+  equals(o){ return deepEq(this, o); }
+}
+const keyOf = x => (x instanceof Number ? +x : x);
+// Ordre d'itération réel d'une HashMap Java : on rejoue les insertions dans une vraie table de hachage
+// (hashCode Java, h ^ (h >>> 16), capacité 16 doublée au-delà de 0,75, put en queue de bucket,
+// computeIfAbsent / merge en tête de bucket, éclatement des buckets au redimensionnement).
+function jhash(k){
+  if (typeof k === 'string'){ let h = 0; for (let i = 0; i < k.length; i++) h = (Math.imul(31, h) + k.charCodeAt(i)) | 0; return h; }
+  if (typeof k === 'boolean') return k ? 1231 : 1237;
+  if (k instanceof Number){ const dv = new DataView(new ArrayBuffer(8)); dv.setFloat64(0, +k); return dv.getInt32(0) ^ dv.getInt32(4); }
+  if (typeof k === 'number' && Number.isInteger(k)) return k | 0;
+  return null;
+}
+function hashLog(owner, key, head){
+  if (owner.unhashable) return;
+  const h0 = jhash(key);
+  if (h0 === null){ owner.unhashable = true; return; }
+  owner.log.push({k: keyOf(key), h: h0 ^ (h0 >>> 16), head});
+}
+function replayOrder(log, initCap = 16){
+  let cap = initCap, tab = Array.from({length: cap}, () => []), size = 0;
+  const resize = () => {
+    const nt = Array.from({length: cap * 2}, () => []);
+    for (let j = 0; j < cap; j++) for (const e of tab[j]) nt[(e.h & cap) === 0 ? j : j + cap].push(e);
+    tab = nt; cap *= 2;
+  };
+  for (const op of log){
+    if (op.del){ for (const bk of tab){ const i = bk.findIndex(e => e.k === op.k); if (i >= 0){ bk.splice(i, 1); size--; break; } } continue; }
+    if (op.head){ if (size > cap * 0.75) resize(); tab[op.h & (cap - 1)].unshift(op); size++; }
+    else { tab[op.h & (cap - 1)].push(op); if (++size > cap * 0.75) resize(); }
+  }
+  return tab.flat().map(e => e.k);
+}
+class JSet {
+  constructor(items = [], opts = {}){ this.m = new Map(); this.opts = opts; this.log = []; for (const x of items) this.add(x); }
+  add(x){ const k = keyOf(x); if (this.m.has(k)) return false; this.m.set(k, x); hashLog(this, x, false); return true; }
+  addAll(c){ let ch = false; for (const x of toIter(c)) ch = this.add(x) || ch; return ch; }
+  remove(x){ const k = keyOf(x); if (!this.m.has(k)) return false; this.m.delete(k); this.log.push({del: true, k}); return true; }
+  contains(x){ return this.m.has(keyOf(x)); }
+  containsAll(c){ return [...toIter(c)].every(x => this.contains(x)); }
+  size(){ return this.m.size; }
+  isEmpty(){ return this.m.size === 0; }
+  toArray(){
+    const a = [...this.m.values()];
+    if (this.opts.sorted) return a.sort(this.opts.cmp || cmpNat);
+    if (this.opts.linked) return a;
+    if (this.unhashable) return a;
+    return replayOrder(this.log, this.opts.cap).map(k => this.m.get(k));
+  }
+  stream(){ return JStream.fromArray(this.toArray()); }
+  forEach(f){ this.toArray().forEach(x => f(x)); }
+  [Symbol.iterator](){ return this.toArray()[Symbol.iterator](); }
+  equals(o){ return deepEq(this, o); }
+}
+class JMap {
+  constructor(opts = {}){ this.m = new Map(); this.opts = opts; this.log = []; }
+  put(k, v, head = false){
+    const kk = keyOf(k), e = this.m.get(kk);
+    if (e){ const old = e[1]; e[1] = v; return old; }
+    this.m.set(kk, [k, v]); hashLog(this, k, head); return null;
+  }
+  get(k){ const e = this.m.get(keyOf(k)); return e ? e[1] : null; }
+  getOrDefault(k, d){ return this.containsKey(k) ? this.get(k) : d; }
+  containsKey(k){ return this.m.has(keyOf(k)); }
+  containsValue(v){ return this._entries().some(e => deepEq(e[1], v)); }
+  putIfAbsent(k, v){ if (!this.containsKey(k)) this.put(k, v); return this.get(k); }
+  computeIfAbsent(k, f){ if (!this.containsKey(k)) this.put(k, f(k), true); return this.get(k); }
+  merge(k, v, f){ if (this.containsKey(k)) this.put(k, f(this.get(k), v)); else this.put(k, v, true); return this.get(k); }
+  remove(k){ const kk = keyOf(k); if (!this.m.has(kk)) return null; const o = this.get(k); this.m.delete(kk); this.log.push({del: true, k: kk}); return o; }
+  size(){ return this.m.size; }
+  isEmpty(){ return this.m.size === 0; }
+  _entries(){
+    const es = [...this.m.values()];
+    if (this.opts.sorted) return es.sort((a, b) => (this.opts.cmp || cmpNat)(a[0], b[0]));
+    if (this.opts.linked) return es;
+    if (this.unhashable) return es;
+    return replayOrder(this.log).map(k => this.m.get(k));
+  }
+  entrySet(){ return new JSet(this._entries().map(([k, v]) => new Entry(k, v)), {linked: true}); }
+  keySet(){ return new JSet(this._entries().map(e => e[0]), {linked: true}); }
+  values(){ return this._entries().map(e => e[1]); }
+  forEach(f){ for (const [k, v] of this._entries()) f(k, v); }
+  equals(o){ return deepEq(this, o); }
+}
+function toIter(c){
+  if (Array.isArray(c)) return c;
+  if (c instanceof JSet) return c.toArray();
+  if (c instanceof JStream) throw new JErr('Un Stream n\'est pas une Collection : collecte-le d\'abord.');
+  return c;
+}
+
+/* ---------------- Stream ---------------- */
+const KIND_NAME = {obj:'Stream<T>', int:'IntStream', long:'LongStream', double:'DoubleStream'};
+const toInt = v => (typeof v === 'number' ? Math.trunc(v) : v);
+class JStream {
+  constructor(src, kind = 'obj'){ this.src = src; this.kind = kind; this.used = false; }
+  static fromArray(a, kind = 'obj'){ return new JStream(() => a[Symbol.iterator](), kind); }
+  static fromGen(g, kind = 'obj'){ return new JStream(g, kind); }
+  _use(){ if (this.used) throw new JErr('IllegalStateException : stream has already been operated upon or closed (un Stream ne se consomme qu\'une fois)'); this.used = true; }
+  _chain(gen, kind = this.kind){ this._use(); const src = this.src; return new JStream(() => gen({[Symbol.iterator]: () => src()}), kind); }
+  _arr(){ this._use(); const out = []; const it = this.src(); for (let r = it.next(); !r.done; r = it.next()){ tick(); out.push(r.value); } return out; }
+  _w(x){ return this.kind === 'double' && typeof x === 'number' ? D(x) : x; }
+  _need(kinds, msg){ if (!kinds.includes(this.kind)) throw new JErr(msg); }
+  _prim(m){ this._need(['int','long','double'], `${m}() n'existe pas sur un Stream<T>. Passe d'abord par mapToInt(...) ou mapToDouble(...) pour obtenir un IntStream / DoubleStream.`); }
+  _obj(m, tip){ this._need(['obj'], `${KIND_NAME[this.kind]} n'a pas de ${m}()${tip ? ' : ' + tip : '.'}`); }
+
+  // --- intermédiaires
+  filter(p){ return this._chain(function*(s){ for (const x of s){ tick(); if (pb(p(x), 'filter')) yield x; } }); }
+  map(f){ const k = this.kind; return this._chain(function*(s){ for (const x of s){ tick(); const v = f(x); if (v === undefined) throw new JErr('La fonction passée à map ne renvoie rien (il manque un return ?).'); yield k === 'int' || k === 'long' ? toInt(num(v)) : v; } }); }
+  mapToInt(f){ this._obj('mapToInt', 'utilise map(...) directement.'); return this._chain(function*(s){ for (const x of s){ tick(); yield toInt(num(f(x))); } }, 'int'); }
+  mapToLong(f){ if (this.kind === 'long') throw new JErr('LongStream n\'a pas de mapToLong() : utilise map(...).'); return this._chain(function*(s){ for (const x of s){ tick(); yield toInt(num(f(x))); } }, 'long'); }
+  mapToDouble(f){ if (this.kind === 'double') throw new JErr('DoubleStream n\'a pas de mapToDouble() : utilise map(...).'); return this._chain(function*(s){ for (const x of s){ tick(); yield num(f(x)); } }, 'double'); }
+  mapToObj(f){ if (this.kind === 'obj') throw new JErr('Stream<T> n\'a pas de mapToObj() : c\'est une méthode d\'IntStream. Ici, map(...) suffit.'); return this._chain(function*(s){ for (const x of s){ tick(); yield f(x); } }, 'obj'); }
+  asDoubleStream(){ this._prim('asDoubleStream'); return this._chain(function*(s){ yield* s; }, 'double'); }
+  asLongStream(){ this._prim('asLongStream'); return this._chain(function*(s){ yield* s; }, 'long'); }
+  boxed(){ if (this.kind === 'obj') throw new JErr('boxed() n\'existe que sur IntStream / LongStream / DoubleStream.'); const k = this.kind; return this._chain(function*(s){ for (const x of s) yield k === 'double' ? D(x) : x; }, 'obj'); }
+  flatMap(f){
+    const k = this.kind;
+    return this._chain(function*(s){
+      for (const x of s){
+        const r = f(x);
+        if (!(r instanceof JStream)) throw new JErr('flatMap attend une fonction qui renvoie un Stream (ex : list.stream() ou Arrays.stream(tab)), pas ' + (Array.isArray(r) ? 'une List / un tableau.' : 'un ' + jtype(r) + '.'));
+        yield* r._arr();
+      }
+    }, k);
+  }
+  flatMapToInt(f){ return this._chain(function*(s){ for (const x of s){ const r = f(x); if (!(r instanceof JStream)) throw new JErr('flatMapToInt attend un IntStream.'); yield* r._arr(); } }, 'int'); }
+  mapMulti(f){ return this._chain(function*(s){ for (const x of s){ const buf = []; f(x, v => { buf.push(v); }); yield* buf; } }, 'obj'); }
+  peek(f){ return this._chain(function*(s){ for (const x of s){ f(x); yield x; } }); }
+  distinct(){ return this._chain(function*(s){ const seen = new Set(); for (const x of s){ const k = keyOf(x); if (!seen.has(k)){ seen.add(k); yield x; } } }); }
+  sorted(c){
+    if (c && this.kind !== 'obj') throw new JErr(`${KIND_NAME[this.kind]}.sorted() ne prend pas de Comparator. Fais boxed() avant si tu veux un tri personnalisé.`);
+    const cmp = c ? strictCmp(c, 'sorted') : cmpNat;
+    return this._chain(function*(s){ const a = [...s]; a.sort((x, y) => num(cmp(x, y))); yield* a; });
+  }
+  limit(n){ if (n < 0) throw new JErr('IllegalArgumentException : limit négatif'); return this._chain(function*(s){ if (n <= 0) return; let i = 0; for (const x of s){ yield x; if (++i >= n) return; } }); }
+  skip(n){ return this._chain(function*(s){ let i = 0; for (const x of s){ if (i++ >= n) yield x; } }); }
+  takeWhile(p){ return this._chain(function*(s){ for (const x of s){ if (!p(x)) return; yield x; } }); }
+  dropWhile(p){ return this._chain(function*(s){ let drop = true; for (const x of s){ if (drop && p(x)) continue; drop = false; yield x; } }); }
+
+  // --- terminales
+  forEach(f){ this._arr().forEach(x => f(x)); }
+  forEachOrdered(f){ this.forEach(f); }
+  toList(){ if (this.kind !== 'obj') throw new JErr(`${KIND_NAME[this.kind]} n'a pas de toList() : ajoute boxed() avant, ou utilise toArray().`); return this._arr(); }
+  toArray(){ return this._arr(); }
+  collect(c, acc, comb){
+    if (arguments.length === 3){ const r = c(); for (const x of this._arr()) acc(r, x); return r; }
+    if (this.kind !== 'obj') throw new JErr(`${KIND_NAME[this.kind]}.collect(Collectors...) ne compile pas : ajoute boxed() avant pour repasser en Stream<Integer>.`);
+    if (!c || !c.__collector) throw new JErr('collect() attend un Collector, par exemple Collectors.toList().');
+    return c(this._arr());
+  }
+  count(){ return this._arr().length; }
+  sum(){ this._prim('sum'); const s = this._arr().reduce((a, b) => a + b, 0); return this._w(s); }
+  average(){ this._prim('average'); const a = this._arr(); return a.length ? new JOptional(D(a.reduce((x, y) => x + y, 0) / a.length), 'double') : JOptional.empty('double'); }
+  summaryStatistics(){ this._prim('summaryStatistics'); return new Stats(this._arr(), this.kind); }
+  reduce(a, b, c){
+    const arr = this._arr();
+    if (arguments.length === 1){
+      if (!arr.length) return JOptional.empty(this.kind);
+      let acc = arr[0]; for (let i = 1; i < arr.length; i++) acc = a(acc, arr[i]);
+      return new JOptional(this._w(acc), this.kind);
+    }
+    let acc = a; for (const x of arr) acc = b(acc, x);
+    return this._w(acc);
+  }
+  _minmax(c, isMax){
+    const name = isMax ? 'max' : 'min';
+    if (this.kind === 'obj'){
+      if (!c) throw new JErr(`${name}() sur un Stream<T> attend un Comparator, par ex. ${name}(Comparator.naturalOrder()) ou ${name}(Comparator.comparing(...)). Ou passe par mapToInt(...).${name}().`);
+      const cmp = strictCmp(c, name), arr = this._arr();
+      if (!arr.length) return JOptional.empty();
+      return new JOptional(arr.reduce((x, y) => isMax ? (cmp(x, y) >= 0 ? x : y) : (cmp(x, y) <= 0 ? x : y)));
+    }
+    if (c) throw new JErr(`${KIND_NAME[this.kind]}.${name}() ne prend pas d'argument.`);
+    const arr = this._arr();
+    if (!arr.length) return JOptional.empty(this.kind);
+    return new JOptional(this._w(isMax ? Math.max(...arr) : Math.min(...arr)), this.kind);
+  }
+  max(c){ return this._minmax(c, true); }
+  min(c){ return this._minmax(c, false); }
+  anyMatch(p){ this._use(); const it = this.src(); for (let r = it.next(); !r.done; r = it.next()){ tick(); if (pb(p(r.value), 'anyMatch')) return true; } return false; }
+  allMatch(p){ this._use(); const it = this.src(); for (let r = it.next(); !r.done; r = it.next()){ tick(); if (!pb(p(r.value), 'allMatch')) return false; } return true; }
+  noneMatch(p){ this._use(); const it = this.src(); for (let r = it.next(); !r.done; r = it.next()){ tick(); if (pb(p(r.value), 'noneMatch')) return false; } return true; }
+  findFirst(){ this._use(); const r = this.src().next(); return r.done ? JOptional.empty(this.kind) : new JOptional(this._w(r.value), this.kind); }
+  findAny(){ return this.findFirst(); }
+  iterator(){ throw new JErr('iterator() n\'est pas supporté dans ce simulateur.'); }
+}
+class Stats {
+  constructor(a, kind){ this.a = a; this.kind = kind; }
+  getCount(){ return this.a.length; }
+  getSum(){ const s = this.a.reduce((x, y) => x + y, 0); return this.kind === 'double' ? D(s) : s; }
+  getMin(){ return this.a.length ? Math.min(...this.a) : (this.kind === 'double' ? Infinity : 2147483647); }
+  getMax(){ return this.a.length ? Math.max(...this.a) : (this.kind === 'double' ? -Infinity : -2147483648); }
+  getAverage(){ return D(this.a.length ? this.a.reduce((x, y) => x + y, 0) / this.a.length : 0); }
+  toString(){ const n = {int:'Int', long:'Long', double:'Double'}[this.kind]; return `${n}SummaryStatistics{count=${this.getCount()}, sum=${jstr(this.getSum())}, min=${this.getMin()}, average=${jstr(this.getAverage())}, max=${this.getMax()}}`; }
+}
+
+/* ---------------- Collectors ---------------- */
+const col = f => { f.__collector = true; return f; };
+const needCol = (c, where) => { if (!c || !c.__collector) throw new JErr(`${where} attend un Collector en aval (ex : Collectors.counting()).`); return c; };
+const Collectors = {
+  toList: () => col(a => a.slice()),
+  toUnmodifiableList: () => col(a => a.slice()),
+  toSet: () => col(a => new JSet(a)),
+  toUnmodifiableSet: () => col(a => new JSet(a)),
+  toCollection: sup => col(a => { const c = sup(); a.forEach(x => c.add(x)); return c; }),
+  joining: (sep = '', pre = '', suf = '') => col(a => {
+    for (const x of a) if (typeof x !== 'string') throw new JErr(`Collectors.joining() attend des String, pas des ${jtype(x)} : ajoute map(String::valueOf) avant.`);
+    return pre + a.join(sep) + suf;
+  }),
+  counting: () => col(a => a.length),
+  summingInt: f => col(a => a.reduce((s, x) => s + toInt(num(f(x))), 0)),
+  summingLong: f => col(a => a.reduce((s, x) => s + toInt(num(f(x))), 0)),
+  summingDouble: f => col(a => D(a.reduce((s, x) => s + num(f(x)), 0))),
+  averagingInt: f => col(a => D(a.length ? a.reduce((s, x) => s + num(f(x)), 0) / a.length : 0)),
+  averagingLong: f => col(a => D(a.length ? a.reduce((s, x) => s + num(f(x)), 0) / a.length : 0)),
+  averagingDouble: f => col(a => D(a.length ? a.reduce((s, x) => s + num(f(x)), 0) / a.length : 0)),
+  summarizingInt: f => col(a => new Stats(a.map(x => num(f(x))), 'int')),
+  summarizingDouble: f => col(a => new Stats(a.map(x => num(f(x))), 'double')),
+  minBy: c => { strictCmp(c, 'minBy'); return col(a => a.length ? new JOptional(a.reduce((x, y) => c(x, y) <= 0 ? x : y)) : JOptional.empty()); },
+  maxBy: c => { strictCmp(c, 'maxBy'); return col(a => a.length ? new JOptional(a.reduce((x, y) => c(x, y) >= 0 ? x : y)) : JOptional.empty()); },
+  mapping: (f, ds) => col(a => needCol(ds, 'mapping(f, ...)')(a.map(x => f(x)))),
+  filtering: (p, ds) => col(a => needCol(ds, 'filtering(p, ...)')(a.filter(x => p(x)))),
+  flatMapping: (f, ds) => col(a => needCol(ds, 'flatMapping(f, ...)')(a.flatMap(x => f(x)._arr()))),
+  collectingAndThen: (ds, f) => col(a => f(needCol(ds, 'collectingAndThen')(a))),
+  teeing: (c1, c2, merger) => col(a => merger(needCol(c1, 'teeing')(a), needCol(c2, 'teeing')(a))),
+  reducing: (...args) => col(a => {
+    if (args.length === 1){ if (!a.length) return JOptional.empty(); return new JOptional(a.reduce((x, y) => args[0](x, y))); }
+    if (args.length === 2) return a.reduce((x, y) => args[1](x, y), args[0]);
+    return a.map(x => args[1](x)).reduce((x, y) => args[2](x, y), args[0]);
+  }),
+  groupingBy: (f, x, y) => {
+    let factory = () => new JMap(), ds = Collectors.toList();
+    if (y !== undefined){ factory = x; ds = y; } else if (x !== undefined) ds = x;
+    needCol(ds, 'groupingBy(f, ...)');
+    return col(a => {
+      const groups = new Map(), keys = new Map();
+      for (const e of a){
+        const k = f(e);
+        if (k === null || k === undefined) throw new JErr('NullPointerException : element cannot be mapped to a null key');
+        const kk = keyOf(k);
+        if (!groups.has(kk)){ groups.set(kk, []); keys.set(kk, k); }
+        groups.get(kk).push(e);
+      }
+      const m = factory();
+      for (const [kk, g] of groups) m.put(keys.get(kk), ds(g), true);  // computeIfAbsent : insertion en tête de bucket
+      return m;
+    });
+  },
+  partitioningBy: (p, ds = Collectors.toList()) => col(a => {
+    needCol(ds, 'partitioningBy(p, ...)');
+    const m = new JMap({linked: true});
+    const flags = a.map(x => pb(p(x), 'partitioningBy'));
+    m.put(false, ds(a.filter((x, i) => !flags[i])));
+    m.put(true, ds(a.filter((x, i) => flags[i])));
+    return m;
+  }),
+  toMap: (kf, vf, merge, factory) => col(a => {
+    const m = factory ? factory() : new JMap();
+    for (const e of a){
+      const k = kf(e), v = vf(e);
+      if (m.containsKey(k)){
+        if (!merge) throw new JErr(`IllegalStateException : Duplicate key ${jstr(k)}. Plusieurs éléments ont la même clé : ajoute une fonction de fusion en 3e argument de toMap (ex : Integer::sum).`);
+        m.put(k, merge(m.get(k), v));
+      } else m.put(k, v, !!merge);  // avec fusion : Map.merge (tête de bucket) ; sans : putIfAbsent (queue)
+    }
+    return m;
+  }),
+};
+Collectors.toUnmodifiableMap = Collectors.toMap;
+
+/* ---------------- Comparator & interfaces fonctionnelles ---------------- */
+const Comparator = {
+  comparing: (k, c) => { if (typeof k !== 'function') throw new JErr('Comparator.comparing attend une fonction (ex : Employee::getName).'); const cc = c ? toCmp(c) : cmpNat; return mkCmp((a, b) => cc(k(a), k(b))); },
+  comparingInt: k => mkCmp((a, b) => cmpNat(k(a), k(b))),
+  comparingLong: k => mkCmp((a, b) => cmpNat(k(a), k(b))),
+  comparingDouble: k => mkCmp((a, b) => cmpNat(k(a), k(b))),
+  naturalOrder: () => mkCmp((a, b) => cmpNat(a, b)),
+  reverseOrder: () => mkCmp((a, b) => cmpNat(b, a)),
+  nullsFirst: c => mkCmp((a, b) => a == null ? (b == null ? 0 : -1) : b == null ? 1 : toCmp(c)(a, b)),
+  nullsLast: c => mkCmp((a, b) => a == null ? (b == null ? 0 : 1) : b == null ? -1 : toCmp(c)(a, b)),
+};
+def(Function.prototype, 'reversed', function(){ const f = this; return mkCmp((a, b) => f(b, a)); });
+def(Function.prototype, 'thenComparing', function(k, c){ const f = this, g = toCmp(k, c); return mkCmp((a, b) => f(a, b) || g(a, b)); });
+def(Function.prototype, 'thenComparingInt', function(k){ return this.thenComparing(Comparator.comparingInt(k)); });
+def(Function.prototype, 'thenComparingDouble', function(k){ return this.thenComparing(Comparator.comparingDouble(k)); });
+def(Function.prototype, 'thenComparingLong', function(k){ return this.thenComparing(Comparator.comparingLong(k)); });
+def(Function.prototype, 'compare', function(a, b){ return this(a, b); });
+def(Function.prototype, 'negate', function(){ const f = this; return x => !f(x); });
+def(Function.prototype, 'and', function(g){ const f = this; return x => f(x) && g(x); });
+def(Function.prototype, 'or', function(g){ const f = this; return x => f(x) || g(x); });
+def(Function.prototype, 'test', function(...a){ return this(...a); });
+def(Function.prototype, 'andThen', function(g){ const f = this; return (...a) => g(f(...a)); });
+def(Function.prototype, 'compose', function(g){ const f = this; return (...a) => f(g(...a)); });
+def(Function.prototype, 'applyAsInt', function(...a){ return this(...a); });
+
+/* ---------------- Patchs sur les types JS pour imiter Java ---------------- */
+// List = Array
+def(Array.prototype, 'stream', function(){ return JStream.fromArray(this.slice()); });
+def(Array.prototype, 'size', function(){ return this.length; });
+def(Array.prototype, 'get', function(i){ if (i < 0 || i >= this.length) throw new JErr(`IndexOutOfBoundsException : Index ${i} out of bounds for length ${this.length}`); return this[i]; });
+def(Array.prototype, 'contains', function(x){ return this.some(y => deepEq(x, y)); });
+def(Array.prototype, 'containsAll', function(c){ return [...toIter(c)].every(x => this.contains(x)); });
+def(Array.prototype, 'isEmpty', function(){ return this.length === 0; });
+def(Array.prototype, 'add', function(x){ this.push(x); return true; });
+def(Array.prototype, 'addAll', function(c){ for (const x of toIter(c)) this.push(x); return true; });
+def(Array.prototype, 'getFirst', function(){ return this.get(0); });
+def(Array.prototype, 'getLast', function(){ return this.get(this.length - 1); });
+def(Array.prototype, 'subList', function(a, b){ return this.slice(a, b); });
+def(Array.prototype, 'equals', function(o){ return deepEq(this, o); });
+// String
+def(String.prototype, 'equals', function(o){ return typeof o === 'string' && String(this) === o; });
+def(String.prototype, 'equalsIgnoreCase', function(o){ return typeof o === 'string' && this.toLowerCase() === o.toLowerCase(); });
+def(String.prototype, 'isEmpty', function(){ return this.length === 0; });
+def(String.prototype, 'isBlank', function(){ return this.trim().length === 0; });
+def(String.prototype, 'contains', function(s){ return this.includes(s); });
+def(String.prototype, 'compareTo', function(o){ return strCmp(String(this), o); });
+def(String.prototype, 'compareToIgnoreCase', function(o){ return strCmp(this.toLowerCase(), o.toLowerCase()); });
+def(String.prototype, 'strip', function(){ return this.trim(); });
+def(String.prototype, 'matches', function(r){ return new RegExp('^(?:' + r + ')$').test(this); });
+def(String.prototype, 'jsplit', function(r){ const a = String(this).split(new RegExp(r)); while (a.length > 1 && a[a.length - 1] === '') a.pop(); if (a.length && a[0] === '' && this.length && r === '') a.shift(); return a; });
+def(String.prototype, 'jreplaceAll', function(r, s){ return this.replace(new RegExp(r, 'g'), s.replace(/\$(\d)/g, '$$$1')); });
+def(String.prototype, 'chars', function(){ return JStream.fromArray([...this].map(c => c.charCodeAt(0)), 'int'); });
+def(String.prototype, 'hashCode', function(){ let h = 0; for (const c of this) h = (31 * h + c.charCodeAt(0)) | 0; return h; });
+// Number / Boolean
+def(Number.prototype, 'intValue', function(){ return Math.trunc(this); });
+def(Number.prototype, 'longValue', function(){ return Math.trunc(this); });
+def(Number.prototype, 'doubleValue', function(){ return +this; });
+def(Number.prototype, 'equals', function(o){ return isNumLike(o) && +this === num(o); });
+def(Number.prototype, 'compareTo', function(o){ return cmpNat(+this, num(o)); });
+def(Boolean.prototype, 'equals', function(o){ return o === this.valueOf(); });
+
+/* ---------------- Globals Java exposés au code ---------------- */
+function sysOut(){ return {
+  println: (x = '') => { OUT.push(jstr(x)); },
+  print: x => { if (OUT.length) OUT[OUT.length - 1] += jstr(x); else OUT.push(jstr(x)); },
+  printf: (f, ...a) => { OUT.push(jformat(f, a)); },
+}; }
+function jformat(f, a){ let i = 0; return f.replace(/%(-?\d*)(?:\.(\d+))?([sdfn%])/g, (m, w, p, t) => { if (t === '%') return '%'; if (t === 'n') return '\n'; const v = num(a[i++]); if (t === 'f') return v.toFixed(p === undefined ? 6 : +p); if (t === 'd') return String(Math.trunc(v)); return jstr(v); }); }
+function ArrayList(c){ return c ? [...toIter(c)] : []; }
+function LinkedList(c){ return c ? [...toIter(c)] : []; }
+function HashSet(c){ if (!c) return new JSet([]); const a = [...toIter(c)]; let cap = 1; const want = Math.max(Math.floor(a.length / 0.75) + 1, 16); while (cap < want) cap *= 2; return new JSet(a, {cap}); }
+function LinkedHashSet(c){ return new JSet(c ? toIter(c) : [], {linked: true}); }
+function TreeSet(c){ return typeof c === 'function' ? new JSet([], {sorted: true, cmp: toCmp(c)}) : new JSet(c ? toIter(c) : [], {sorted: true}); }
+function HashMap(){ return new JMap(); }
+function LinkedHashMap(){ return new JMap({linked: true}); }
+function TreeMap(c){ return new JMap(c ? {sorted: true, cmp: toCmp(c)} : {sorted: true}); }
+const parseIntJ = s => { s = String(s).trim(); if (!/^[+-]?\d+$/.test(s)) throw new JErr(`NumberFormatException : For input string: "${s}"`); return parseInt(s, 10); };
+const RT = {
+  List: { of: (...a) => a, copyOf: c => [...toIter(c)] },
+  Set: { of: (...a) => new JSet(a), copyOf: c => new JSet(toIter(c)) },
+  Map: {
+    of: (...a) => { const m = new JMap(); for (let i = 0; i < a.length; i += 2) m.put(a[i], a[i + 1]); return m; },
+    entry: (k, v) => new Entry(k, v),
+    Entry: {
+      comparingByKey: c => mkCmp((a, b) => (c ? toCmp(c) : cmpNat)(a.getKey(), b.getKey())),
+      comparingByValue: c => mkCmp((a, b) => (c ? toCmp(c) : cmpNat)(a.getValue(), b.getValue())),
+    },
+  },
+  Arrays: {
+    asList: (...a) => a,
+    stream: a => { if (!Array.isArray(a)) throw new JErr('Arrays.stream attend un tableau.'); return JStream.fromArray(a.slice(), a.__prim || 'obj'); },
+  },
+  Stream: {
+    of: (...a) => JStream.fromArray(a),
+    empty: () => JStream.fromArray([]),
+    concat: (a, b) => { const x = a._arr(), y = b._arr(); return JStream.fromArray(x.concat(y), a.kind); },
+    iterate: (seed, f, g) => JStream.fromGen(function*(){ let v = seed; if (g){ for (; f(v); v = g(v)){ tick(); yield v; } } else { for (;;){ tick(); yield v; v = f(v); } } }),
+    generate: s => JStream.fromGen(function*(){ for (;;){ tick(); yield s(); } }),
+  },
+  IntStream: {
+    range: (a, b) => JStream.fromGen(function*(){ for (let i = a; i < b; i++){ tick(); yield i; } }, 'int'),
+    rangeClosed: (a, b) => JStream.fromGen(function*(){ for (let i = a; i <= b; i++){ tick(); yield i; } }, 'int'),
+    of: (...a) => JStream.fromArray(a, 'int'),
+    empty: () => JStream.fromArray([], 'int'),
+    iterate: (seed, f, g) => JStream.fromGen(function*(){ let v = seed; if (g){ for (; f(v); v = toInt(g(v))){ tick(); yield v; } } else { for (;;){ tick(); yield v; v = toInt(f(v)); } } }, 'int'),
+    concat: (a, b) => JStream.fromArray(a._arr().concat(b._arr()), 'int'),
+  },
+  DoubleStream: { of: (...a) => JStream.fromArray(a.map(num), 'double') },
+  LongStream: { range: (a, b) => RT.IntStream.range(a, b), rangeClosed: (a, b) => RT.IntStream.rangeClosed(a, b), of: (...a) => JStream.fromArray(a, 'long') },
+  Collectors, Comparator,
+  Function: { identity: () => x => x },
+  UnaryOperator: { identity: () => x => x },
+  Predicate: { not: p => x => !p(x), isEqual: v => x => deepEq(x, v) },
+  Objects: { nonNull: x => x != null, isNull: x => x == null, equals: (a, b) => deepEq(a, b), requireNonNull: x => { if (x == null) throw new JErr('NullPointerException'); return x; }, hash: (...a) => a.length },
+  Integer: { parseInt: parseIntJ, valueOf: x => typeof x === 'string' ? parseIntJ(x) : x, sum: (a, b) => a + b, max: Math.max, min: Math.min, compare: (a, b) => cmpNat(a, b), toString: x => String(x), signum: Math.sign, MAX_VALUE: 2147483647, MIN_VALUE: -2147483648 },
+  Long: { parseLong: parseIntJ, valueOf: x => x, sum: (a, b) => a + b, max: Math.max, min: Math.min, compare: (a, b) => cmpNat(a, b), MAX_VALUE: Number.MAX_SAFE_INTEGER },
+  Double: { parseDouble: s => { const v = parseFloat(s); if (isNaN(v)) throw new JErr(`NumberFormatException : For input string: "${s}"`); return D(v); }, valueOf: x => D(num(x)), sum: (a, b) => D(num(a) + num(b)), max: (a, b) => D(Math.max(num(a), num(b))), min: (a, b) => D(Math.min(num(a), num(b))), compare: (a, b) => cmpNat(a, b), MAX_VALUE: Number.MAX_VALUE },
+  Boolean: { parseBoolean: s => String(s).toLowerCase() === 'true', logicalAnd: (a, b) => a && b, logicalOr: (a, b) => a || b, logicalXor: (a, b) => a !== b, TRUE: true, FALSE: false },
+  Character: {
+    isUpperCase: c => { const s = typeof c === 'number' ? String.fromCharCode(c) : c; return s !== s.toLowerCase() && s === s.toUpperCase(); },
+    isLowerCase: c => { const s = typeof c === 'number' ? String.fromCharCode(c) : c; return s !== s.toUpperCase() && s === s.toLowerCase(); },
+    isDigit: c => /\d/.test(typeof c === 'number' ? String.fromCharCode(c) : c),
+    isLetter: c => /\p{L}/u.test(typeof c === 'number' ? String.fromCharCode(c) : c),
+    isWhitespace: c => /\s/.test(typeof c === 'number' ? String.fromCharCode(c) : c),
+    toUpperCase: c => typeof c === 'number' ? String.fromCharCode(c).toUpperCase().charCodeAt(0) : c.toUpperCase(),
+    toLowerCase: c => typeof c === 'number' ? String.fromCharCode(c).toLowerCase().charCodeAt(0) : c.toLowerCase(),
+    getNumericValue: c => parseInt(typeof c === 'number' ? String.fromCharCode(c) : c, 36),
+  },
+  String: {
+    valueOf: x => jstr(x),
+    join: (sep, ...a) => (a.length === 1 && (Array.isArray(a[0]) || a[0] instanceof JSet) ? [...toIter(a[0])] : a).join(sep),
+    format: (f, ...a) => jformat(f, a),
+    CASE_INSENSITIVE_ORDER: mkCmp((a, b) => strCmp(a.toLowerCase(), b.toLowerCase())),
+  },
+  Math: Object.assign(Object.create(Math), { round: x => Math.round(num(x)) }),
+  Collections: { reverseOrder: c => c ? mkCmp((a, b) => toCmp(c)(b, a)) : Comparator.reverseOrder(), max: (c, k) => { const a = [...toIter(c)]; const cmp = k ? toCmp(k) : cmpNat; return a.reduce((x, y) => cmp(x, y) >= 0 ? x : y); }, min: (c, k) => { const a = [...toIter(c)]; const cmp = k ? toCmp(k) : cmpNat; return a.reduce((x, y) => cmp(x, y) <= 0 ? x : y); }, emptyList: () => [], frequency: (c, x) => [...toIter(c)].filter(y => deepEq(x, y)).length },
+  Optional: { of: v => { if (v == null) throw new JErr('NullPointerException : Optional.of(null)'); return new JOptional(v); }, ofNullable: v => new JOptional(v), empty: () => JOptional.empty() },
+  ArrayList, LinkedList, HashSet, LinkedHashSet, TreeSet, HashMap, LinkedHashMap, TreeMap,
+};
+
+/* ---------------- Affichage façon Java ---------------- */
+function fmtNum(n, dbl){
+  if (!isFinite(n)) return isNaN(n) ? 'NaN' : (n > 0 ? 'Infinity' : '-Infinity');
+  const r = parseFloat(n.toPrecision(12));
+  if (dbl && Number.isInteger(r)) return r.toFixed(1);
+  return String(r);
+}
+function jstr(v){
+  if (v === null || v === undefined) return 'null';
+  if (v instanceof Number) return fmtNum(+v, true);
+  if (typeof v === 'number') return fmtNum(v, false);
+  if (typeof v === 'string') return v;
+  if (typeof v === 'boolean') return String(v);
+  if (Array.isArray(v)) return '[' + v.map(jstr).join(', ') + ']';
+  if (v instanceof JSet) return '[' + v.toArray().map(jstr).join(', ') + ']';
+  if (v instanceof JMap) return '{' + v._entries().map(([k, x]) => jstr(k) + '=' + jstr(x)).join(', ') + '}';
+  if (v instanceof Entry) return jstr(v.k) + '=' + jstr(v.v);
+  if (v instanceof JOptional) return v.v === undefined ? OPT_NAMES[v.kind] + '.empty' : OPT_NAMES[v.kind] + '[' + jstr(v.v) + ']';
+  if (v instanceof JStream) return 'java.util.stream.ReferencePipeline$3@6d06d69c';
+  if (typeof v === 'function') return v.__collector ? 'java.util.stream.Collectors$CollectorImpl@4e25154f' : 'Lambda$14/0x0000000800c03000@7a81197d';
+  if (typeof v.toString === 'function' && v.toString !== Object.prototype.toString) return v.toString();
+  return String(v);
+}
+const BOX = {int:'Integer', long:'Long', double:'Double', boolean:'Boolean', char:'Character'};
+const box = t => BOX[t] || t;
+function jtype(v){
+  if (v === undefined) return 'void';
+  if (v === null) return 'null';
+  if (v instanceof Number) return 'Double';
+  if (typeof v === 'number') return Number.isInteger(v) ? 'int' : 'double';
+  if (typeof v === 'string') return 'String';
+  if (typeof v === 'boolean') return 'boolean';
+  if (Array.isArray(v)) return 'List<' + (v.length ? box(jtype(v[0])) : '?') + '>';
+  if (v instanceof JSet){ const a = v.toArray(); return 'Set<' + (a.length ? box(jtype(a[0])) : '?') + '>'; }
+  if (v instanceof JMap){ const e = v._entries(); return 'Map<' + (e.length ? box(jtype(e[0][0])) + ', ' + box(jtype(e[0][1])) : '?, ?') + '>'; }
+  if (v instanceof Entry) return 'Map.Entry<' + box(jtype(v.k)) + ', ' + box(jtype(v.v)) + '>';
+  if (v instanceof JOptional) return v.kind === 'obj' ? 'Optional<' + (v.v === undefined ? '?' : box(jtype(v.v))) + '>' : OPT_NAMES[v.kind];
+  if (v instanceof JStream) return KIND_NAME[v.kind].replace('<T>', '<?>');
+  if (v instanceof Stats) return 'SummaryStatistics';
+  if (typeof v === 'function') return v.__collector ? 'Collector' : 'Lambda';
+  return v.constructor ? v.constructor.name : 'Object';
+}
+function deepEq(a, b){
+  if (isNumLike(a) && isNumLike(b)) return Math.abs(num(a) - num(b)) < 1e-6;
+  if (a === b) return true;
+  if (a === null || b === null || a === undefined || b === undefined) return false;
+  if (Array.isArray(a)) return Array.isArray(b) && a.length === b.length && a.every((x, i) => deepEq(x, b[i]));
+  if (a instanceof JSet){ if (!(b instanceof JSet) || a.size() !== b.size()) return false; const bb = b.toArray(); return a.toArray().every(x => bb.some(y => deepEq(x, y))); }
+  if (a instanceof JMap){ if (!(b instanceof JMap) || a.size() !== b.size()) return false; return a._entries().every(([k, v]) => b.containsKey(k) && deepEq(v, b.get(k))); }
+  if (a instanceof Entry) return b instanceof Entry && deepEq(a.k, b.k) && deepEq(a.v, b.v);
+  if (a instanceof JOptional) return b instanceof JOptional && ((a.v === undefined && b.v === undefined) || (a.v !== undefined && b.v !== undefined && deepEq(a.v, b.v)));
+  return false;
+}
+
+/* ---------------- Modèle de données ---------------- */
+class Employee {
+  constructor(name, dept, salary, age, city){ Object.assign(this, {name, dept, salary, age, city}); }
+  getName(){ return this.name; } getDept(){ return this.dept; } getSalary(){ return this.salary; }
+  getAge(){ return this.age; } getCity(){ return this.city; }
+  toString(){ return `Employee[${this.name}]`; }
+}
+class Trade {
+  constructor(id, trader, instrument, assetClass, side, quantity, price, currency){ Object.assign(this, {id, trader, instrument, assetClass, side, quantity, price, currency}); }
+  getId(){ return this.id; } getTrader(){ return this.trader; } getInstrument(){ return this.instrument; }
+  getAssetClass(){ return this.assetClass; } getSide(){ return this.side; } getQuantity(){ return this.quantity; }
+  getPrice(){ return D(this.price); } getCurrency(){ return this.currency; }
+  getNotional(){ return D(this.quantity * this.price); }
+  toString(){ return `Trade[#${this.id}]`; }
+}
+const E = (...a) => new Employee(...a), T = (...a) => new Trade(...a);
+const PACKS = {
+  words: [
+    ['java', 'stream', 'lambda', 'map', 'filter', 'collect', 'optional', 'api', 'record', 'sealed', 'var', 'switch'],
+    ['spring', 'boot', 'kafka', 'docker', 'k8s', 'jpa', 'rest', 'zookeeper', 'api', 'maven', 'gradle', 'jvm', 'test', 'git'],
+  ],
+  nums: [
+    [4, 8, 15, 16, 23, 42, 7, 8, 1, 30],
+    [3, 9, 12, 5, 20, 21, 5, 100, 64, 2, 11],
+  ],
+  n: [10, 25],
+  sentences: [
+    ['la BCE garde ses taux', 'les taux montent encore', 'le CAC ouvre en hausse', 'la BCE surprend le marché'],
+    ['le marché attend la FED', 'la FED baisse ses taux', 'le marché salue la décision'],
+  ],
+  employees: [
+    [E('Alice', 'IT', 4800, 31, 'Paris'), E('Bruno', 'RH', 3200, 45, 'Lyon'), E('Chloé', 'IT', 5200, 28, 'Paris'), E('David', 'FINANCE', 4500, 38, 'Nantes'),
+     E('Emma', 'FINANCE', 6100, 52, 'Paris'), E('Farid', 'IT', 3900, 26, 'Lille'), E('Gaëlle', 'RH', 3500, 34, 'Paris'), E('Hugo', 'FINANCE', 4100, 29, 'Lyon')],
+    [E('Inès', 'RISK', 5500, 41, 'Paris'), E('Jules', 'IT', 4300, 23, 'Lyon'), E('Kenza', 'IT', 4700, 30, 'Paris'), E('Louis', 'RISK', 3800, 27, 'Lille'),
+     E('Manon', 'OPS', 3100, 35, 'Nantes'), E('Nathan', 'IT', 6000, 44, 'Paris'), E('Océane', 'OPS', 3600, 29, 'Lyon')],
+  ],
+  trades: [
+    [T(1, 'Léa', 'BNP FP', 'EQUITY', 'BUY', 1200, 62.5, 'EUR'), T(2, 'Hugo', 'OAT 10Y', 'RATES', 'BUY', 5000, 98.2, 'EUR'),
+     T(3, 'Inès', 'EUR/USD', 'FX', 'SELL', 1000000, 1.085, 'USD'), T(4, 'Léa', 'AAPL US', 'EQUITY', 'BUY', 800, 228.4, 'USD'),
+     T(5, 'Karim', 'BUND 10Y', 'RATES', 'SELL', 3000, 101.6, 'EUR'), T(6, 'Hugo', 'BNP FP', 'EQUITY', 'SELL', 500, 63.1, 'EUR'),
+     T(7, 'Inès', 'TTE FP', 'EQUITY', 'BUY', 2500, 57.8, 'EUR'), T(8, 'Karim', 'EUR/USD', 'FX', 'BUY', 750000, 1.091, 'USD'),
+     T(9, 'Léa', 'OAT 10Y', 'RATES', 'SELL', 2000, 97.9, 'EUR'), T(10, 'Hugo', 'VOD LN', 'EQUITY', 'SELL', 1500, 46.2, 'GBP')],
+    [T(1, 'Karim', 'TTE FP', 'EQUITY', 'BUY', 4000, 58.2, 'EUR'), T(2, 'Léa', 'EUR/USD', 'FX', 'BUY', 600000, 1.079, 'USD'),
+     T(3, 'Hugo', 'BUND 10Y', 'RATES', 'BUY', 4000, 100.9, 'EUR'), T(4, 'Inès', 'BNP FP', 'EQUITY', 'SELL', 1500, 61.8, 'EUR'),
+     T(5, 'Karim', 'OAT 10Y', 'RATES', 'SELL', 3500, 98.6, 'EUR'), T(6, 'Léa', 'AAPL US', 'EQUITY', 'BUY', 1000, 226.1, 'USD'),
+     T(7, 'Hugo', 'EUR/USD', 'FX', 'SELL', 400000, 1.082, 'USD'), T(8, 'Inès', 'TTE FP', 'EQUITY', 'BUY', 1200, 57.5, 'EUR'),
+     T(9, 'Karim', 'BNP FP', 'EQUITY', 'BUY', 2000, 62.0, 'EUR')],
+  ],
+};
+function dataset(vars, variant){ const ds = {}; for (const v of vars){ const x = PACKS[v][variant]; ds[v] = Array.isArray(x) ? x.slice() : x; } return ds; }
+
+/* ---------------- Interpréteur Java (lexer + parser + évaluateur) ---------------- */
+const STATICS = {
+  String: ['valueOf', 'join', 'format'],
+  Integer: ['parseInt', 'sum', 'max', 'min', 'compare', 'valueOf', 'toString', 'signum'],
+  Long: ['parseLong', 'sum', 'max', 'min', 'compare', 'valueOf'],
+  Double: ['parseDouble', 'sum', 'max', 'min', 'compare', 'valueOf'],
+  Boolean: ['parseBoolean', 'logicalAnd', 'logicalOr', 'logicalXor'],
+  List: ['of', 'copyOf'], Set: ['of', 'copyOf'], Map: ['of', 'entry'], Stream: ['of', 'concat', 'iterate', 'generate'],
+  IntStream: ['of', 'range', 'rangeClosed', 'concat'], Optional: ['of', 'ofNullable'],
+  Character: '*', Math: '*', Arrays: '*', Objects: '*', Collections: '*', Predicate: '*', Function: '*',
+};
+const CMP_NAMES = ['compare', 'compareTo', 'compareToIgnoreCase'];
+const KEYWORDS = new Set(['new', 'return', 'true', 'false', 'null', 'instanceof', 'if', 'else', 'final', 'var', 'throw', 'this']);
+const PRIMS = new Set(['int', 'long', 'double', 'float', 'boolean', 'char', 'short', 'byte']);
+const synErr = (msg, k) => new JErr(`Erreur de syntaxe${k && k.line ? ` (ligne ${k.line})` : ''} : ${msg}`);
+
+function lex(src){
+  const toks = []; let i = 0, line = 1;
+  const ESC = {n: '\n', t: '\t', r: '\r', '"': '"', "'": "'", '\\': '\\', 0: '\0'};
+  while (i < src.length){
+    const c = src[i], at = {line};
+    if (c === '\n'){ line++; i++; continue; }
+    if (/\s/.test(c)){ i++; continue; }
+    if (c === '/' && src[i + 1] === '/'){ while (i < src.length && src[i] !== '\n') i++; continue; }
+    if (c === '/' && src[i + 1] === '*'){ const j = src.indexOf('*/', i + 2); const end = j < 0 ? src.length : j + 2; line += (src.slice(i, end).match(/\n/g) || []).length; i = end; continue; }
+    if (/[0-9]/.test(c) || (c === '.' && /[0-9]/.test(src[i + 1]))){
+      const m = /^(?:0[xX][0-9a-fA-F_]+|[0-9][0-9_]*(?:\.[0-9][0-9_]*)?(?:[eE][+-]?\d+)?|\.[0-9]+(?:[eE][+-]?\d+)?)([lLdDfF]?)/.exec(src.slice(i));
+      const raw = m[0], suf = m[1].toLowerCase(), body = raw.slice(0, raw.length - m[1].length).replace(/_/g, '');
+      const dbl = suf === 'd' || suf === 'f' || (!/^0[xX]/.test(body) && /[.eE]/.test(body));
+      toks.push({t: 'num', v: Number(body), dbl, line}); i += raw.length; continue;
+    }
+    if (c === '"' || c === "'"){
+      let j = i + 1, s = '';
+      while (j < src.length && src[j] !== c && src[j] !== '\n'){
+        if (src[j] === '\\'){ const e = src[j + 1]; s += e in ESC ? ESC[e] : e; j += 2; }
+        else s += src[j++];
+      }
+      if (src[j] !== c) throw synErr(c === '"' ? 'chaîne non fermée, il manque un guillemet "' : "caractère non fermé, il manque une apostrophe '", at);
+      if (c === "'" && s.length !== 1) throw synErr(`'${s}' n'est pas un char valide. Pour une String, utilise des guillemets doubles : "${s}"`, at);
+      toks.push({t: c === '"' ? 'str' : 'chr', v: s, line}); i = j + 1; continue;
+    }
+    if (/[A-Za-z_$]/.test(c)){
+      const w = /^[A-Za-z_$][\w$]*/.exec(src.slice(i))[0];
+      toks.push({t: KEYWORDS.has(w) ? 'kw' : 'id', v: w, line}); i += w.length; continue;
+    }
+    const two = src.substr(i, 2);
+    if (['->', '::', '==', '!=', '<=', '>=', '&&', '||', '++', '--', '+=', '-=', '*=', '/=', '%='].includes(two)){ toks.push({t: 'op', v: two, line}); i += 2; continue; }
+    if ('+-*/%<>!?:.,(){}[];=&|^~@'.includes(c)){ toks.push({t: 'op', v: c, line}); i++; continue; }
+    throw synErr(`caractère inattendu « ${c} »`, at);
+  }
+  toks.push({t: 'eof', v: '', line});
+  return toks;
+}
+const show = k => (k.t === 'eof' ? 'la fin du code' : k.t === 'str' ? `"${k.v}"` : k.v);
+
+const PREC = {'||': 1, '&&': 2, '|': 3, '^': 4, '&': 5, '==': 6, '!=': 6, '<': 7, '>': 7, '<=': 7, '>=': 7, 'instanceof': 7, '+': 9, '-': 9, '*': 10, '/': 10, '%': 10};
+class Parser {
+  constructor(t){ this.t = t; this.p = 0; }
+  peek(o = 0){ return this.t[Math.min(this.p + o, this.t.length - 1)]; }
+  next(){ return this.t[Math.min(this.p++, this.t.length - 1)]; }
+  is(v, o = 0){ const k = this.peek(o); return (k.t === 'op' || k.t === 'kw') && k.v === v; }
+  eat(v){ if (this.is(v)){ this.p++; return true; } return false; }
+  expect(v, ctx){
+    if (this.eat(v)) return;
+    const k = this.peek();
+    let extra = '';
+    if (v === ')' && k.t === 'id') extra = ' (il manque peut-être un point ou une virgule)';
+    throw synErr(`« ${v} » attendu${ctx ? ' ' + ctx : ''}, mais trouvé « ${show(k)} »${extra}`, k);
+  }
+  skipTypeArgs(){
+    if (!this.is('<')) return true;
+    this.p++; let d = 1;
+    while (d > 0){
+      const k = this.next();
+      if (k.t === 'eof') return false;
+      if (k.t === 'op'){ if (k.v === '<') d++; else if (k.v === '>') d--; else if (![',', '?', '.', '[', ']', '&'].includes(k.v)) return false; }
+      else if (k.t !== 'id') return false;
+    }
+    return true;
+  }
+  tryType(){
+    const save = this.p;
+    if (this.peek().t !== 'id'){ return null; }
+    let s = this.next().v;
+    while (this.is('.') && this.peek(1).t === 'id'){ this.p++; s += '.' + this.next().v; }
+    if (this.is('<')){ if (!this.skipTypeArgs()){ this.p = save; return null; } s += '<>'; }
+    while (this.is('[') && this.is(']', 1)){ this.p += 2; s += '[]'; }
+    return s;
+  }
+  matchParen(p){ let d = 0; for (let i = p; i < this.t.length; i++){ const k = this.t[i]; if (k.t !== 'op') continue; if (k.v === '(') d++; else if (k.v === ')'){ if (--d === 0) return i; } } return -1; }
+
+  parseExpr(){
+    if (this.peek().t === 'id' && this.is('->', 1)){ const n = this.next().v; this.p++; return this.lambdaBody([n]); }
+    if (this.is('(')){
+      const close = this.matchParen(this.p), after = this.t[close + 1];
+      if (close > 0 && after && after.t === 'op' && after.v === '->'){
+        const params = this.lambdaParams(this.p + 1, close); this.p = close + 2; return this.lambdaBody(params);
+      }
+    }
+    return this.parseAssign();
+  }
+  lambdaParams(a, b){
+    const groups = [[]]; let d = 0;
+    for (let i = a; i < b; i++){
+      const k = this.t[i];
+      if (k.v === '<') d++; if (k.v === '>') d--;
+      if (k.t === 'op' && k.v === ',' && d === 0){ groups.push([]); continue; }
+      groups[groups.length - 1].push(k);
+    }
+    if (groups.length === 1 && !groups[0].length) return [];
+    return groups.map(g => { const ids = g.filter(k => k.t === 'id'); if (!ids.length) throw synErr('paramètre de lambda invalide', g[0] || this.t[a]); return ids[ids.length - 1].v; });
+  }
+  lambdaBody(params){
+    if (this.is('{')) return {k: 'lambda', params, block: this.parseBlock()};
+    return {k: 'lambda', params, expr: this.parseExpr()};
+  }
+  parseAssign(){
+    const left = this.parseTernary(), k = this.peek();
+    if (k.t === 'op' && ['=', '+=', '-=', '*=', '/=', '%='].includes(k.v)){
+      this.p++;
+      if (left.k !== 'name') throw synErr(k.v === '=' ? 'affectation impossible ici. Pour comparer, utilise == (ou equals pour des String)' : 'affectation impossible ici', k);
+      return {k: 'assign', name: left.name, op: k.v, right: this.parseExpr()};
+    }
+    return left;
+  }
+  parseTernary(){
+    const c = this.parseBin(1);
+    if (this.eat('?')){ const a = this.parseExpr(); this.expect(':', 'dans le ternaire'); const b = this.parseExpr(); return {k: 'cond', c, a, b}; }
+    return c;
+  }
+  parseBin(min){
+    let left = this.parseUnary();
+    for (;;){
+      const k = this.peek();
+      if (!(k.t === 'op' || k.t === 'kw')) break;
+      const pr = PREC[k.v];
+      if (pr === undefined || pr < min) break;
+      this.p++;
+      if (k.v === 'instanceof'){ const ty = this.tryType(); if (!ty) throw synErr('type attendu après instanceof', k); left = {k: 'instof', e: left, type: ty}; continue; }
+      const right = this.parseBin(pr + 1);
+      left = {k: 'bin', op: k.v, a: left, b: right, line: k.line};
+    }
+    return left;
+  }
+  parseUnary(){
+    const k = this.peek();
+    if (k.t === 'op' && ['!', '-', '+', '~'].includes(k.v)){ this.p++; return {k: 'unary', op: k.v, e: this.parseUnary()}; }
+    if (k.t === 'op' && (k.v === '++' || k.v === '--')){ this.p++; return {k: 'inc', op: k.v, pre: true, e: this.parseUnary()}; }
+    if (this.is('(')){
+      const save = this.p; this.p++;
+      const ty = this.tryType();
+      if (ty && this.is(')')){
+        const base = ty.replace(/<>|\[\]/g, '');
+        const isType = PRIMS.has(base) || /^[A-Z]/.test(base.split('.').pop());
+        const nk = this.peek(1);
+        const startsOperand = ['id', 'num', 'str', 'chr'].includes(nk.t) || (nk.t === 'op' && ['(', '!', '~'].includes(nk.v)) || (nk.t === 'kw' && ['new', 'true', 'false', 'null'].includes(nk.v)) || (PRIMS.has(base) && nk.t === 'op' && (nk.v === '-' || nk.v === '+'));
+        if (isType && startsOperand){ this.p++; return {k: 'cast', type: base, e: this.parseUnary()}; }
+      }
+      this.p = save;
+    }
+    return this.parsePostfix(this.parsePrimary());
+  }
+  parsePrimary(){
+    const k = this.next();
+    if (k.t === 'num') return {k: 'lit', v: k.dbl ? D(k.v) : k.v};
+    if (k.t === 'str' || k.t === 'chr') return {k: 'lit', v: k.v};
+    if (k.t === 'kw'){
+      if (k.v === 'true') return {k: 'lit', v: true};
+      if (k.v === 'false') return {k: 'lit', v: false};
+      if (k.v === 'null') return {k: 'lit', v: null};
+      if (k.v === 'new') return this.parseNew(k);
+    }
+    if (k.t === 'id'){
+      if (this.is('[') && this.is(']', 1) && this.is('::', 2)){ this.p += 3; const n = this.next(); if (n.v !== 'new') throw synErr('seul Type[]::new est supporté', n); return {k: 'arrnew'}; }
+      if (this.is('<') && /^[A-Z]/.test(k.v)){ const save = this.p; if (this.skipTypeArgs() && this.is('::')) return {k: 'name', name: k.v, line: k.line}; this.p = save; }
+      return {k: 'name', name: k.v, line: k.line};
+    }
+    if (k.t === 'op' && k.v === '('){ const e = this.parseExpr(); this.expect(')'); return e; }
+    throw synErr(`expression attendue, mais trouvé « ${show(k)} »`, k);
+  }
+  parseNew(at){
+    const ty = this.tryType();
+    if (!ty) throw synErr('type attendu après new', at);
+    if (ty.endsWith('[]')){
+      this.expect('{', 'pour initialiser le tableau'); const items = [];
+      if (!this.is('}')){ do { items.push(this.parseExpr()); } while (this.eat(',')); }
+      this.expect('}'); return {k: 'arrlit', items, elem: ty.replace(/\[\]$/, '')};
+    }
+    this.expect('(', 'après new ' + ty.replace('<>', ''));
+    return {k: 'new', type: ty.replace(/<>$/, ''), args: this.parseArgs()};
+  }
+  parseArgs(){
+    const a = [];
+    if (this.eat(')')) return a;
+    do { a.push(this.parseExpr()); } while (this.eat(','));
+    this.expect(')', 'pour fermer les arguments');
+    return a;
+  }
+  parsePostfix(e){
+    for (;;){
+      if (this.eat('.')){
+        this.skipTypeArgs();
+        const nk = this.next();
+        if (nk.t !== 'id') throw synErr(`nom de méthode attendu après « . », mais trouvé « ${show(nk)} »`, nk);
+        if (this.eat('(')) e = {k: 'call', target: e, name: nk.v, args: this.parseArgs(), line: nk.line};
+        else e = {k: 'member', target: e, name: nk.v, line: nk.line};
+      } else if (this.eat('::')){
+        const nk = this.next();
+        if (!(nk.t === 'id' || (nk.t === 'kw' && nk.v === 'new'))) throw synErr('nom de méthode attendu après « :: »', nk);
+        e = {k: 'mref', target: e, name: nk.v};
+      } else if (this.is('[')){
+        this.p++; const i = this.parseExpr(); this.expect(']'); e = {k: 'index', target: e, i};
+      } else if (this.peek().t === 'op' && (this.peek().v === '++' || this.peek().v === '--')){
+        e = {k: 'inc', op: this.next().v, pre: false, e};
+      } else if (e.k === 'name' && this.is('(')){
+        throw synErr(`« ${e.name}(...) » appelé sans objet ni classe devant. Écris par exemple Math.${e.name}(...) ou x.${e.name}(...)`, this.peek());
+      } else break;
+    }
+    return e;
+  }
+  parseBlock(){
+    this.expect('{'); const body = [];
+    while (!this.is('}')){ if (this.peek().t === 'eof') throw synErr('« } » attendu pour fermer le bloc', this.peek()); body.push(this.parseStmt()); }
+    this.p++; return {k: 'block', body};
+  }
+  parseStmt(){
+    if (this.is('{')) return this.parseBlock();
+    if (this.eat(';')) return {k: 'empty'};
+    if (this.eat('return')){ if (this.eat(';')) return {k: 'return'}; const e = this.parseExpr(); this.expect(';', 'après le return'); return {k: 'return', e}; }
+    if (this.eat('if')){ this.expect('(', 'après if'); const c = this.parseExpr(); this.expect(')'); const a = this.parseStmt(); const b = this.eat('else') ? this.parseStmt() : null; return {k: 'if', c, a, b}; }
+    if (this.eat('throw')){ const e = this.parseExpr(); this.expect(';'); return {k: 'throw', e}; }
+    const save = this.p; this.eat('final');
+    let ty = null;
+    if (this.eat('var')) ty = 'var'; else if (this.peek().t === 'id') ty = this.tryType();
+    if (ty && this.peek().t === 'id' && (this.is('=', 1) || this.is(';', 1))){
+      const name = this.next().v; const init = this.eat('=') ? this.parseExpr() : null;
+      this.expect(';', 'à la fin de la déclaration'); return {k: 'decl', name, type: ty.replace(/<>|\[\]/g, ''), init};
+    }
+    this.p = save;
+    const e = this.parseExpr(); this.expect(';', 'à la fin de l\'instruction'); return {k: 'expr', e};
+  }
+}
+function parseProgram(src){
+  const P = new Parser(lex(src));
+  const save = P.p; P.eat('final');
+  const ty = P.eat('var') ? 'var' : P.tryType();
+  if (ty && P.peek().t === 'id' && P.peek().v === 'result' && P.is('=', 1)) P.p += 2; else P.p = save;
+  if (P.peek().t === 'eof') throw new JErr('Ton code est vide.');
+  const e = P.parseExpr(); P.eat(';');
+  const k = P.peek();
+  if (k.t !== 'eof') throw synErr(`code en trop à partir de « ${show(k)} ».${k.t === 'id' ? ' Il manque sans doute un point avant ' + k.v + '.' : ' Écris une seule expression.'}`, k);
+  return e;
+}
+
+/* --- évaluation --- */
+class Scope {
+  constructor(parent){ this.vars = new Map(); this.parent = parent; }
+  find(n){ let s = this; while (s){ if (s.vars.has(n)) return s; s = s.parent; } return null; }
+}
+const TYPES = {Employee, Trade};
+const CTORS = {ArrayList, LinkedList, HashSet, LinkedHashSet, TreeSet, HashMap, LinkedHashMap, TreeMap, Employee: (...a) => new Employee(...a), Trade: (...a) => new Trade(...a)};
+const EXC = ['RuntimeException', 'IllegalArgumentException', 'IllegalStateException', 'NoSuchElementException', 'Exception', 'UnsupportedOperationException', 'ArithmeticException'];
+let CTX = {data: {}, sys: null};
+function lookup(name, sc){
+  const s = sc && sc.find(name); if (s) return s.vars.get(name);
+  if (name in CTX.data) return CTX.data[name];
+  if (name === 'System') return CTX.sys;
+  if (Object.prototype.hasOwnProperty.call(RT, name)) return RT[name];
+  if (name in TYPES) return TYPES[name];
+  const sug = didYouMean(name, [...Object.keys(CTX.data), ...Object.keys(RT), 'System', 'Employee', 'Trade', ...(sc ? [...(function*(x){ while (x){ yield* x.vars.keys(); x = x.parent; } })(sc)] : [])]);
+  throw new JErr(`Symbole inconnu : ${name}.${sug ? ` Tu voulais dire ${sug} ?` : ' Vérifie l\'orthographe (Java est sensible à la casse).'}`);
+}
+const isValueName = (n, sc) => !!(sc && sc.find(n)) || n in CTX.data || n === 'System';
+function qualName(e){ if (e.k === 'name') return e.name; if (e.k === 'member'){ const q = qualName(e.target); return q ? q + '.' + e.name : null; } return null; }
+function resolveType(q){ const segs = q.split('.'); let o = lookup(segs[0], null); for (const s of segs.slice(1)) o = o[s]; return o; }
+function construct(t, args){
+  t = t.replace(/<.*$/, '');
+  if (EXC.includes(t)) return {__exc: true, type: t, msg: args[0] != null ? jstr(args[0]) : ''};
+  const c = CTORS[t];
+  if (!c) throw new JErr(`Le simulateur ne sait pas construire « new ${t}(...) ».`);
+  return c(...args);
+}
+const pb = (v, where) => { if (typeof v !== 'boolean') throw new JErr(`${where} attend un prédicat qui renvoie un boolean, pas un ${jtype(v)}.`); return v; };
+function cast(type, v){
+  switch (type){
+    case 'int': case 'long': case 'short': case 'byte': case 'Integer': case 'Long':
+      if (typeof v === 'string' && v.length === 1) return v.charCodeAt(0);
+      if (!isNumLike(v)) throw new JErr(`ClassCastException : impossible de convertir ${jtype(v)} en ${type}`);
+      return Math.trunc(num(v));
+    case 'double': case 'float': case 'Double':
+      if (typeof v === 'string' && v.length === 1) return D(v.charCodeAt(0));
+      if (!isNumLike(v)) throw new JErr(`ClassCastException : impossible de convertir ${jtype(v)} en ${type}`);
+      return D(num(v));
+    case 'char': return typeof v === 'number' ? String.fromCharCode(v) : v;
+    default: return v;
+  }
+}
+function arith(op, a, b){
+  if (op === '+' && (typeof a === 'string' || typeof b === 'string')) return jstr(a) + jstr(b);
+  if (!isNumLike(a) || !isNumLike(b)) throw new JErr(`L'opérateur ${op} ne s'applique pas entre ${jtype(a)} et ${jtype(b)}.`);
+  const dbl = a instanceof Number || b instanceof Number, x = num(a), y = num(b);
+  let r;
+  switch (op){
+    case '+': r = x + y; break;
+    case '-': r = x - y; break;
+    case '*': r = x * y; break;
+    case '/': if (!dbl){ if (y === 0) throw new JErr('ArithmeticException : / by zero'); r = Math.trunc(x / y); } else r = x / y; break;
+    case '%': if (!dbl && y === 0) throw new JErr('ArithmeticException : / by zero'); r = x % y; break;
+  }
+  return dbl ? D(r) : r;
+}
+const ch = (x, other) => (typeof x === 'string' && x.length === 1 && isNumLike(other) ? x.charCodeAt(0) : x);
+function jeq(a, b){ a = ch(a, b); b = ch(b, a); if (isNumLike(a) && isNumLike(b)) return num(a) === num(b); return a === b; }
+function binop(e, sc){
+  const op = e.op;
+  if (op === '&&') return pb(ev(e.a, sc), '&&') && pb(ev(e.b, sc), '&&');
+  if (op === '||') return pb(ev(e.a, sc), '||') || pb(ev(e.b, sc), '||');
+  let a = ev(e.a, sc), b = ev(e.b, sc);
+  if (op !== '+' && op !== '==' && op !== '!='){ const a2 = ch(a, b); b = ch(b, a); a = a2; }
+  switch (op){
+    case '==': return jeq(a, b);
+    case '!=': return !jeq(a, b);
+    case '<': case '>': case '<=': case '>=': {
+      if (!isNumLike(a) || !isNumLike(b)){
+        if (typeof a === 'string' && typeof b === 'string') throw new JErr(`On ne compare pas deux String avec ${op} en Java : utilise a.compareTo(b) ${op} 0.`);
+        throw new JErr(`L'opérateur ${op} ne s'applique pas entre ${jtype(a)} et ${jtype(b)}.`);
+      }
+      const x = num(a), y = num(b);
+      return op === '<' ? x < y : op === '>' ? x > y : op === '<=' ? x <= y : x >= y;
+    }
+    case '&': return typeof a === 'boolean' ? a && b : num(a) & num(b);
+    case '|': return typeof a === 'boolean' ? a || b : num(a) | num(b);
+    case '^': return typeof a === 'boolean' ? a !== b : num(a) ^ num(b);
+    default: return arith(op, a, b);
+  }
+}
+function setVar(name, v, sc){ const s = sc && sc.find(name); if (!s) throw new JErr(`Impossible de modifier ${name} : seules les variables locales d'une lambda sont modifiables (et les données sont en lecture seule).`); s.vars.set(name, v); }
+function getMember(o, name){
+  if (o === null || o === undefined) throw new JErr(`NullPointerException : accès à .${name} sur null`);
+  if (Array.isArray(o) && name === 'length') return o.length;
+  if (typeof o === 'string') throw new JErr(name === 'length' ? 'length() est une méthode sur String : ajoute les parenthèses.' : `String n'a pas de champ ${name}.`);
+  if (o instanceof Employee || o instanceof Trade){ const g = 'get' + name[0].toUpperCase() + name.slice(1); throw new JErr(`Le champ ${name} est privé : utilise ${g}().`); }
+  if (Array.isArray(o)) throw new JErr(`List n'a pas de champ ${name}${name === 'size' ? ' : size() est une méthode, ajoute les parenthèses' : ''}.`);
+  const v = o[name];
+  if (v === undefined) throw new JErr(`${jtype(o)} n'a pas de champ ${name}.`);
+  if (typeof v === 'function' && !(o === RT.Map && name === 'Entry')) throw new JErr(`${name} est une méthode : ajoute les parenthèses ${name}(...).`);
+  return v;
+}
+const LIST_M = new Set(['stream', 'parallelStream', 'size', 'get', 'contains', 'containsAll', 'isEmpty', 'add', 'addAll', 'getFirst', 'getLast', 'subList', 'indexOf', 'lastIndexOf', 'forEach', 'sort', 'toArray', 'reversed', 'iterator']);
+const STR_M = new Set(['length', 'charAt', 'equalsIgnoreCase', 'isEmpty', 'isBlank', 'contains', 'startsWith', 'endsWith', 'indexOf', 'lastIndexOf', 'substring', 'toUpperCase', 'toLowerCase', 'trim', 'strip', 'split', 'replace', 'replaceAll', 'matches', 'compareTo', 'compareToIgnoreCase', 'chars', 'repeat', 'concat', 'toCharArray', 'lines', 'hashCode']);
+const FN_CALL = new Set(['apply', 'accept', 'test', 'get', 'applyAsInt', 'applyAsDouble', 'applyAsLong', 'compare', 'run', 'call', 'getAsInt', 'getAsDouble']);
+function callMethod(o, name, args){
+  if (o === null || o === undefined) throw new JErr(`NullPointerException : appel de ${name}() sur null`);
+  if (name === 'toString' && !args.length) return jstr(o);
+  if (name === 'equals' && args.length === 1) return deepEq(o, args[0]) || o === args[0];
+  if (name === 'getClass') return {getSimpleName: () => jtype(o).replace(/<.*/, ''), getName: () => jtype(o)};
+  if (typeof o === 'function' && FN_CALL.has(name)) return o(...args);
+  if (typeof o === 'string'){
+    if (!STR_M.has(name)){ if (name === 'size') throw new JErr('String n\'a pas de méthode size() : utilise length().'); throw noMethod(o, name, 'String'); }
+    switch (name){
+      case 'length': return o.length;
+      case 'split': return o.jsplit(...args);
+      case 'replaceAll': return o.jreplaceAll(...args);
+      case 'replace': return o.split(jstr(args[0])).join(jstr(args[1]));
+      case 'toCharArray': return [...o];
+      case 'lines': return JStream.fromArray(o.split(/\r?\n/));
+      case 'charAt': { const i = num(args[0]); if (i < 0 || i >= o.length) throw new JErr(`StringIndexOutOfBoundsException : index ${i}, length ${o.length}`); return o[i]; }
+      case 'substring': { const a = num(args[0]), b = args.length > 1 ? num(args[1]) : o.length; if (a < 0 || b > o.length || a > b) throw new JErr(`StringIndexOutOfBoundsException : begin ${a}, end ${b}, length ${o.length}`); return o.substring(a, b); }
+    }
+    return o[name](...args.map(num));
+  }
+  if (typeof o === 'number' || typeof o === 'boolean' || o instanceof Number){
+    const f = Object(o)[name];
+    if (typeof f !== 'function' || !['intValue', 'longValue', 'doubleValue', 'compareTo', 'equals'].includes(name)) throw noMethod(o, name);
+    return f.apply(o, args);
+  }
+  if (Array.isArray(o)){
+    if (!LIST_M.has(name)){ if (['map', 'filter', 'reduce', 'sorted', 'distinct', 'collect', 'count', 'anyMatch', 'toList'].includes(name)) throw new JErr(`List n'a pas de méthode ${name}() : passe d'abord par stream().`); throw noMethod(o, name, 'List'); }
+    switch (name){
+      case 'parallelStream': return o.stream();
+      case 'sort': { const c = args[0] ? strictCmp(args[0], 'sort') : cmpNat; o.sort((a, b) => num(c(a, b))); return; }
+      case 'forEach': o.forEach(x => args[0](x)); return;
+      case 'toArray': return o.slice();
+      case 'reversed': return o.slice().reverse();
+      case 'iterator': throw new JErr('iterator() n\'est pas supporté dans ce simulateur.');
+    }
+    return o[name](...args);
+  }
+  const f = o[name];
+  if (typeof f !== 'function' || name[0] === '_' || name === 'constructor') throw noMethod(o, name);
+  return f.apply(o, args);
+}
+function makeLambda(e, sc){
+  const run = args => {
+    const s = new Scope(sc);
+    e.params.forEach((p, i) => s.vars.set(p, args[i]));
+    if (e.expr) return ev(e.expr, s);
+    const r = exec(e.block, s);
+    return r ? r.v : undefined;
+  };
+  const n = e.params.length;
+  return n === 0 ? () => run([]) : n === 1 ? a => run([a]) : n === 2 ? (a, b) => run([a, b]) : (...a) => run(a);
+}
+function makeRef(e, sc){
+  const name = e.name, q = qualName(e.target);
+  if (q && !isValueName(q.split('.')[0], sc) && /^[A-Z]/.test(q.split('.').pop())){
+    if (name === 'new') return (...a) => construct(q, a);
+    const st = STATICS[q];
+    if (st && (st === '*' || st.includes(name))){
+      const T = resolveType(q);
+      if (CMP_NAMES.includes(name)) return (a, b) => callMethod(T, name, [a, b]);
+      return (x, ...a) => callMethod(T, name, [x, ...a]);
+    }
+    if (CMP_NAMES.includes(name)) return (a, b) => callMethod(a, name, [b]);
+    return (x, ...a) => callMethod(x, name, a);
+  }
+  const obj = ev(e.target, sc);
+  return (x, ...a) => callMethod(obj, name, [x, ...a]);
+}
+function ev(e, sc){
+  switch (e.k){
+    case 'lit': return e.v;
+    case 'name': return lookup(e.name, sc);
+    case 'member': return getMember(ev(e.target, sc), e.name);
+    case 'call': { const o = ev(e.target, sc); return callMethod(o, e.name, e.args.map(a => ev(a, sc))); }
+    case 'lambda': return makeLambda(e, sc);
+    case 'mref': return makeRef(e, sc);
+    case 'arrnew': return n => new Array(num(n)).fill(null);
+    case 'cond': return pb(ev(e.c, sc), 'Le ternaire ? :') ? ev(e.a, sc) : ev(e.b, sc);
+    case 'unary': {
+      const v = ev(e.e, sc);
+      if (e.op === '!') return !pb(v, 'L\'opérateur !');
+      if (!isNumLike(v)) throw new JErr(`L'opérateur ${e.op} ne s'applique pas à un ${jtype(v)}.`);
+      if (e.op === '-') return v instanceof Number ? D(-v) : -v;
+      if (e.op === '~') return ~num(v);
+      return v;
+    }
+    case 'bin': return binop(e, sc);
+    case 'cast': return cast(e.type, ev(e.e, sc));
+    case 'new': return construct(e.type, e.args.map(a => ev(a, sc)));
+    case 'arrlit': { const a = e.items.map(x => ev(x, sc)); const pk = {int: 'int', long: 'long', short: 'int', byte: 'int', double: 'double', float: 'double'}[e.elem]; if (pk){ const b = a.map(x => pk === 'double' ? num(x) : toInt(num(x))); Object.defineProperty(b, '__prim', {value: pk}); return b; } return a; }
+    case 'index': {
+      const o = ev(e.target, sc), i = num(ev(e.i, sc));
+      if (!Array.isArray(o)) throw new JErr('[i] ne s\'applique qu\'aux tableaux. Pour une List, utilise get(i).');
+      if (i < 0 || i >= o.length) throw new JErr(`ArrayIndexOutOfBoundsException : Index ${i} out of bounds for length ${o.length}`);
+      return o[i];
+    }
+    case 'assign': {
+      let v = ev(e.right, sc);
+      if (e.op !== '=') v = arith(e.op[0], lookup(e.name, sc), v);
+      setVar(e.name, v, sc); return v;
+    }
+    case 'inc': {
+      if (e.e.k !== 'name') throw new JErr(`${e.op} ne s'applique qu'à une variable.`);
+      const old = lookup(e.e.name, sc), nv = arith(e.op[0], old, 1);
+      setVar(e.e.name, nv, sc); return e.pre ? nv : old;
+    }
+    case 'instof': {
+      const v = ev(e.e, sc), t = e.type.replace(/<>/, '');
+      if (v === null || v === undefined) return false;
+      if (t === 'String' || t === 'CharSequence') return typeof v === 'string';
+      if (t === 'Integer' || t === 'Long') return typeof v === 'number';
+      if (t === 'Double') return v instanceof Number;
+      if (t === 'Number') return isNumLike(v);
+      if (t === 'Boolean') return typeof v === 'boolean';
+      if (t === 'List' || t === 'Collection') return Array.isArray(v) || (t === 'Collection' && v instanceof JSet);
+      if (t === 'Object') return true;
+      return !!(TYPES[t] && v instanceof TYPES[t]);
+    }
+  }
+  throw new JErr('Expression non supportée par le simulateur.');
+}
+function exec(st, sc){
+  switch (st.k){
+    case 'block': { const s = new Scope(sc); for (const x of st.body){ const r = exec(x, s); if (r) return r; } return null; }
+    case 'return': return {v: st.e ? ev(st.e, sc) : undefined};
+    case 'if': if (pb(ev(st.c, sc), 'if')) return exec(st.a, sc); return st.b ? exec(st.b, sc) : null;
+    case 'decl': {
+      if (sc.vars.has(st.name)) throw new JErr(`La variable ${st.name} est déjà définie.`);
+      let v = st.init ? ev(st.init, sc) : undefined;
+      if (v !== undefined && ['int', 'long', 'double', 'float', 'Double', 'char'].includes(st.type)) v = cast(st.type, v);
+      sc.vars.set(st.name, v); return null;
+    }
+    case 'expr': ev(st.e, sc); return null;
+    case 'throw': { const x = ev(st.e, sc); throw new JErr(x && x.__exc ? `${x.type}${x.msg ? ' : ' + x.msg : ''}` : 'Exception levée'); }
+    case 'empty': return null;
+  }
+}
+function evalJava(code, ds){
+  BUDGET = 0;
+  CTX = {data: ds, sys: {out: sysOut()}};
+  return ev(parseProgram(code), null);
+}
+function friendlyError(e){
+  if (e instanceof JErr) return {msg: e.message};
+  const m = String(e && e.message || e);
+  if (/Maximum call stack/.test(m)) return {msg: 'StackOverflowError : récursion infinie.'};
+  if (/is not a function/.test(m)) return {msg: 'Un argument devait être une lambda ou une référence de méthode (ex : x -> ..., Employee::getName).', detail: m};
+  if (/Cannot read propert|of undefined|of null/.test(m)) return {msg: 'NullPointerException : une valeur est null ou absente à cet endroit.', detail: m};
+  return {msg: 'Erreur à l\'exécution.', detail: m};
+}
+
+/* ---------------- Catalogue des membres (autocomplétion + « tu voulais dire ») ---------------- */
+// [nom, paramètres ('' = aucun, null = champ / classe), type renvoyé, description]
+const STREAM_COMMON = [
+  ['filter', 'x -> boolean', 'Stream<T>', 'Garde les éléments pour lesquels le prédicat renvoie true.'],
+  ['map', 'x -> y', 'Stream<R>', 'Transforme chaque élément.'],
+  ['flatMap', 'x -> Stream<R>', 'Stream<R>', 'Remplace chaque élément par un stream, puis aplatit le tout.'],
+  ['distinct', '', 'Stream<T>', 'Retire les doublons (selon equals).'],
+  ['sorted', '[Comparator]', 'Stream<T>', 'Trie par ordre naturel, ou avec le Comparator donné. Tri stable.'],
+  ['limit', 'long n', 'Stream<T>', 'Garde les n premiers éléments.'],
+  ['skip', 'long n', 'Stream<T>', 'Saute les n premiers éléments.'],
+  ['peek', 'x -> void', 'Stream<T>', 'Observe chaque élément sans le modifier (pratique pour débugger avec println).'],
+  ['takeWhile', 'x -> boolean', 'Stream<T>', 'Prend les éléments tant que le prédicat est vrai (Java 9+).'],
+  ['dropWhile', 'x -> boolean', 'Stream<T>', 'Saute les éléments tant que le prédicat est vrai (Java 9+).'],
+  ['count', '', 'long', 'Opération terminale : nombre d\'éléments.'],
+  ['reduce', 'identité, (a, b) -> ...', 'T', 'Opération terminale : combine tous les éléments en une seule valeur.'],
+  ['anyMatch', 'x -> boolean', 'boolean', 'Vrai si au moins un élément vérifie le prédicat. S\'arrête dès le premier.'],
+  ['allMatch', 'x -> boolean', 'boolean', 'Vrai si tous les éléments vérifient le prédicat.'],
+  ['noneMatch', 'x -> boolean', 'boolean', 'Vrai si aucun élément ne vérifie le prédicat.'],
+  ['findFirst', '', 'Optional<T>', 'Premier élément du stream, dans un Optional.'],
+  ['findAny', '', 'Optional<T>', 'Un élément quelconque (le premier en séquentiel).'],
+  ['forEach', 'x -> void', 'void', 'Opération terminale : exécute une action sur chaque élément. Ne renvoie rien.'],
+  ['toArray', '', 'Object[]', 'Collecte dans un tableau.'],
+];
+const STREAM_OBJ = [
+  ['toList', '', 'List<T>', 'Collecte dans une List non modifiable (Java 16+).'],
+  ['collect', 'Collector', 'R', 'Collecte avec un Collector : Collectors.toList(), groupingBy(...), joining(...)...'],
+  ['mapToInt', 'x -> int', 'IntStream', 'Passe en IntStream pour avoir sum(), average(), max()...'],
+  ['mapToDouble', 'x -> double', 'DoubleStream', 'Passe en DoubleStream.'],
+  ['mapToLong', 'x -> long', 'LongStream', 'Passe en LongStream.'],
+  ['min', 'Comparator', 'Optional<T>', 'Plus petit élément selon le Comparator.'],
+  ['max', 'Comparator', 'Optional<T>', 'Plus grand élément selon le Comparator.'],
+];
+const STREAM_PRIM = [
+  ['sum', '', 'int', 'Somme des éléments.'],
+  ['average', '', 'OptionalDouble', 'Moyenne, dans un OptionalDouble (vide si aucun élément).'],
+  ['min', '', 'OptionalInt', 'Plus petit élément.'],
+  ['max', '', 'OptionalInt', 'Plus grand élément.'],
+  ['boxed', '', 'Stream<Integer>', 'Repasse en Stream d\'objets (nécessaire pour toList() ou collect).'],
+  ['mapToObj', 'x -> R', 'Stream<R>', 'Transforme chaque nombre en objet.'],
+  ['asDoubleStream', '', 'DoubleStream', 'Convertit en DoubleStream.'],
+  ['summaryStatistics', '', 'IntSummaryStatistics', 'min, max, moyenne, somme et nombre en un seul passage.'],
+];
+const LIST_C = [
+  ['stream', '', 'Stream<E>', 'Ouvre un stream sur la liste.'],
+  ['size', '', 'int', 'Nombre d\'éléments.'],
+  ['get', 'int index', 'E', 'Élément à la position donnée.'],
+  ['contains', 'Object o', 'boolean', 'Vrai si la liste contient o.'],
+  ['isEmpty', '', 'boolean', 'Vrai si la liste est vide.'],
+  ['indexOf', 'Object o', 'int', 'Position de o, ou -1.'],
+  ['subList', 'int from, int to', 'List<E>', 'Sous-liste [from, to).'],
+  ['getFirst', '', 'E', 'Premier élément (Java 21+).'],
+  ['getLast', '', 'E', 'Dernier élément (Java 21+).'],
+  ['forEach', 'x -> void', 'void', 'Action sur chaque élément.'],
+];
+const STRING_C = [
+  ['length', '', 'int', 'Nombre de caractères.'],
+  ['charAt', 'int index', 'char', 'Caractère à la position donnée.'],
+  ['isEmpty', '', 'boolean', 'Vrai si la longueur vaut 0.'],
+  ['isBlank', '', 'boolean', 'Vrai si vide ou seulement des espaces (Java 11+).'],
+  ['contains', 'CharSequence s', 'boolean', 'Vrai si la chaîne contient s.'],
+  ['startsWith', 'String prefix', 'boolean', 'Commence par prefix.'],
+  ['endsWith', 'String suffix', 'boolean', 'Finit par suffix.'],
+  ['equals', 'Object o', 'boolean', 'Compare le contenu. Toujours equals pour des String, jamais ==.'],
+  ['equalsIgnoreCase', 'String s', 'boolean', 'Compare sans tenir compte de la casse.'],
+  ['toUpperCase', '', 'String', 'En majuscules.'],
+  ['toLowerCase', '', 'String', 'En minuscules.'],
+  ['trim', '', 'String', 'Retire les espaces au début et à la fin.'],
+  ['strip', '', 'String', 'Comme trim, compatible Unicode (Java 11+).'],
+  ['substring', 'int begin[, int end]', 'String', 'Sous-chaîne [begin, end).'],
+  ['indexOf', 'String s', 'int', 'Position de s, ou -1.'],
+  ['split', 'String regex', 'String[]', 'Découpe selon une regex. Combine avec Arrays.stream(...).'],
+  ['replace', 'CharSequence a, CharSequence b', 'String', 'Remplace toutes les occurrences de a par b.'],
+  ['chars', '', 'IntStream', 'Stream des codes des caractères.'],
+  ['compareTo', 'String s', 'int', 'Comparaison alphabétique : négatif, 0 ou positif.'],
+  ['repeat', 'int n', 'String', 'Répète la chaîne n fois (Java 11+).'],
+  ['matches', 'String regex', 'boolean', 'Vrai si toute la chaîne correspond à la regex.'],
+];
+const OPT_C = kind => [
+  ['isPresent', '', 'boolean', 'Vrai si une valeur est présente.'],
+  ['isEmpty', '', 'boolean', 'Vrai si vide (Java 11+).'],
+  [OPT_GET[kind], '', kind === 'obj' ? 'T' : kind, 'Récupère la valeur. Lève NoSuchElementException si vide.'],
+  ['orElse', 'T autre', 'T', 'La valeur, ou autre si vide.'],
+  ['orElseGet', '() -> T', 'T', 'La valeur, ou le résultat du Supplier si vide.'],
+  ['orElseThrow', '[() -> Exception]', 'T', 'La valeur, ou lève une exception si vide.'],
+  ['ifPresent', 'x -> void', 'void', 'Exécute l\'action si une valeur est présente.'],
+  ...(kind === 'obj' ? [['map', 'x -> y', 'Optional<R>', 'Transforme la valeur si présente.'], ['filter', 'x -> boolean', 'Optional<T>', 'Vide l\'Optional si le prédicat est faux.']] : []),
+];
+const MAP_C = [
+  ['get', 'Object key', 'V', 'Valeur associée à la clé, ou null.'],
+  ['getOrDefault', 'Object key, V def', 'V', 'Valeur associée, ou def.'],
+  ['containsKey', 'Object key', 'boolean', 'Vrai si la clé existe.'],
+  ['entrySet', '', 'Set<Map.Entry<K, V>>', 'Les paires clé/valeur. Fais .stream() dessus pour les parcourir.'],
+  ['keySet', '', 'Set<K>', 'Les clés.'],
+  ['values', '', 'Collection<V>', 'Les valeurs.'],
+  ['size', '', 'int', 'Nombre d\'entrées.'],
+  ['isEmpty', '', 'boolean', 'Vrai si vide.'],
+  ['forEach', '(k, v) -> void', 'void', 'Action sur chaque paire.'],
+];
+const SET_C = [
+  ['stream', '', 'Stream<E>', 'Ouvre un stream sur l\'ensemble.'],
+  ['contains', 'Object o', 'boolean', 'Vrai si o est présent.'],
+  ['size', '', 'int', 'Nombre d\'éléments.'],
+  ['isEmpty', '', 'boolean', 'Vrai si vide.'],
+];
+const ENTRY_C = [['getKey', '', 'K', 'La clé.'], ['getValue', '', 'V', 'La valeur.']];
+const EMP_C = [
+  ['getName', '', 'String', 'Prénom de l\'employé.'], ['getDept', '', 'String', 'Département : IT, RH, FINANCE...'],
+  ['getSalary', '', 'int', 'Salaire mensuel.'], ['getAge', '', 'int', 'Âge.'], ['getCity', '', 'String', 'Ville.'],
+];
+const TRADE_C = [
+  ['getId', '', 'int', 'Identifiant du trade.'], ['getTrader', '', 'String', 'Nom du trader.'],
+  ['getInstrument', '', 'String', 'Instrument : BNP FP, OAT 10Y, EUR/USD...'], ['getAssetClass', '', 'String', '"EQUITY", "RATES" ou "FX".'],
+  ['getSide', '', 'String', '"BUY" ou "SELL".'], ['getQuantity', '', 'int', 'Quantité.'], ['getPrice', '', 'double', 'Prix unitaire.'],
+  ['getNotional', '', 'double', 'quantity * price.'], ['getCurrency', '', 'String', 'Devise : EUR, USD, GBP.'],
+];
+const NUM_C = [['intValue', '', 'int', 'Valeur en int.'], ['doubleValue', '', 'double', 'Valeur en double.'], ['compareTo', 'Integer o', 'int', 'Comparaison : négatif, 0 ou positif.'], ['equals', 'Object o', 'boolean', 'Égalité de valeur.']];
+const CMP_INST = [
+  ['reversed', '', 'Comparator<T>', 'Inverse l\'ordre.'],
+  ['thenComparing', 'x -> clé [, Comparator]', 'Comparator<T>', 'Critère secondaire en cas d\'égalité.'],
+  ['thenComparingInt', 'x -> int', 'Comparator<T>', 'Critère secondaire sur un int.'],
+  ['thenComparingDouble', 'x -> double', 'Comparator<T>', 'Critère secondaire sur un double.'],
+  ['compare', 'T a, T b', 'int', 'Compare deux éléments.'],
+];
+const FUNC_C = [['apply', 'x', 'R', 'Applique la fonction.'], ['test', 'x', 'boolean', 'Teste le prédicat.'], ['negate', '', 'Predicate<T>', 'Inverse le prédicat.'], ['and', 'Predicate', 'Predicate<T>', 'ET logique.'], ['or', 'Predicate', 'Predicate<T>', 'OU logique.'], ['andThen', 'Function', 'Function', 'Enchaîne une autre fonction.']];
+const STATS_C = [['getMin', '', 'int', 'Minimum.'], ['getMax', '', 'int', 'Maximum.'], ['getAverage', '', 'double', 'Moyenne.'], ['getSum', '', 'long', 'Somme.'], ['getCount', '', 'long', 'Nombre d\'éléments.']];
+const STATIC_C = {
+  Collectors: [
+    ['toList', '', 'Collector', 'Collecte dans une List.'], ['toSet', '', 'Collector', 'Collecte dans un Set (sans doublons).'],
+    ['toMap', 'x -> clé, x -> valeur [, fusion]', 'Collector', 'Construit une Map. Ajoute une fonction de fusion si des clés se répètent.'],
+    ['joining', '[séparateur, préfixe, suffixe]', 'Collector', 'Concatène des String.'],
+    ['groupingBy', 'x -> clé [, Collector aval]', 'Collector', 'Regroupe par clé : Map<K, List<T>> par défaut.'],
+    ['partitioningBy', 'x -> boolean [, Collector aval]', 'Collector', 'Sépare en deux groupes : Map<Boolean, ...>.'],
+    ['counting', '', 'Collector', 'Compte les éléments (Long).'],
+    ['summingInt', 'x -> int', 'Collector', 'Somme d\'une propriété int.'], ['summingDouble', 'x -> double', 'Collector', 'Somme d\'une propriété double.'],
+    ['averagingInt', 'x -> int', 'Collector', 'Moyenne d\'une propriété int (Double).'], ['averagingDouble', 'x -> double', 'Collector', 'Moyenne d\'une propriété double.'],
+    ['mapping', 'x -> y, Collector aval', 'Collector', 'Transforme avant de passer au collector aval.'],
+    ['filtering', 'x -> boolean, Collector aval', 'Collector', 'Filtre avant le collector aval (Java 9+).'],
+    ['flatMapping', 'x -> Stream, Collector aval', 'Collector', 'Aplatit avant le collector aval (Java 9+).'],
+    ['minBy', 'Comparator', 'Collector', 'Plus petit élément, dans un Optional.'], ['maxBy', 'Comparator', 'Collector', 'Plus grand élément, dans un Optional.'],
+    ['collectingAndThen', 'Collector, résultat -> ...', 'Collector', 'Applique une transformation finale au résultat.'],
+    ['reducing', 'identité, (a, b) -> ...', 'Collector', 'Réduction façon reduce.'],
+    ['toCollection', '() -> collection', 'Collector', 'Collecte dans la collection de ton choix (TreeSet::new...).'],
+    ['summarizingInt', 'x -> int', 'Collector', 'Statistiques complètes.'],
+  ],
+  Comparator: [
+    ['comparing', 'x -> clé [, Comparator]', 'Comparator<T>', 'Compare selon une clé extraite.'],
+    ['comparingInt', 'x -> int', 'Comparator<T>', 'Compare selon une clé int.'],
+    ['comparingDouble', 'x -> double', 'Comparator<T>', 'Compare selon une clé double.'],
+    ['naturalOrder', '', 'Comparator<T>', 'Ordre naturel.'], ['reverseOrder', '', 'Comparator<T>', 'Ordre naturel inversé.'],
+  ],
+  IntStream: [['range', 'int a, int b', 'IntStream', 'De a inclus à b exclu.'], ['rangeClosed', 'int a, int b', 'IntStream', 'De a à b inclus.'], ['of', 'int... valeurs', 'IntStream', 'Stream de valeurs données.'], ['iterate', 'seed, x -> suivant', 'IntStream', 'Suite infinie : pense à limit().']],
+  Stream: [['of', 'T... valeurs', 'Stream<T>', 'Stream de valeurs données.'], ['iterate', 'seed, x -> suivant', 'Stream<T>', 'Suite infinie : pense à limit().'], ['generate', '() -> T', 'Stream<T>', 'Stream infini.'], ['concat', 'Stream a, Stream b', 'Stream<T>', 'Met deux streams bout à bout.'], ['empty', '', 'Stream<T>', 'Stream vide.']],
+  Arrays: [['stream', 'T[] tableau', 'Stream<T>', 'Stream sur un tableau (ex : s.split(" ")).'], ['asList', 'T... valeurs', 'List<T>', 'Liste à partir de valeurs.']],
+  List: [['of', 'E... valeurs', 'List<E>', 'Liste non modifiable.']],
+  Set: [['of', 'E... valeurs', 'Set<E>', 'Ensemble non modifiable.']],
+  Map: [['of', 'k1, v1, ...', 'Map<K, V>', 'Map non modifiable.'], ['entry', 'K k, V v', 'Map.Entry<K, V>', 'Crée une paire.'], ['Entry', null, 'class', 'Map.Entry : comparingByKey(), comparingByValue()...']],
+  'Map.Entry': [['comparingByValue', '[Comparator]', 'Comparator<Map.Entry>', 'Compare des entrées par valeur.'], ['comparingByKey', '[Comparator]', 'Comparator<Map.Entry>', 'Compare des entrées par clé.']],
+  Math: [['max', 'a, b', 'number', 'Le plus grand.'], ['min', 'a, b', 'number', 'Le plus petit.'], ['abs', 'x', 'number', 'Valeur absolue.'], ['pow', 'a, b', 'double', 'a puissance b.'], ['sqrt', 'x', 'double', 'Racine carrée.'], ['round', 'x', 'long', 'Arrondi.'], ['floor', 'x', 'double', 'Arrondi inférieur.'], ['ceil', 'x', 'double', 'Arrondi supérieur.']],
+  Integer: [['parseInt', 'String s', 'int', 'Convertit une String en int.'], ['valueOf', 'x', 'Integer', ''], ['sum', 'int a, int b', 'int', 'a + b (pratique en référence : Integer::sum).'], ['max', 'int a, int b', 'int', ''], ['min', 'int a, int b', 'int', ''], ['compare', 'int a, int b', 'int', ''], ['MAX_VALUE', null, 'int', '2147483647'], ['MIN_VALUE', null, 'int', '-2147483648']],
+  Double: [['parseDouble', 'String s', 'double', ''], ['sum', 'double a, double b', 'double', ''], ['max', 'a, b', 'double', ''], ['compare', 'a, b', 'int', '']],
+  String: [['valueOf', 'Object o', 'String', 'Convertit en String.'], ['join', 'séparateur, éléments', 'String', 'Assemble des String.'], ['format', 'format, args...', 'String', 'Formatage façon printf.']],
+  Character: [['isUpperCase', 'char c', 'boolean', ''], ['isLowerCase', 'char c', 'boolean', ''], ['isDigit', 'char c', 'boolean', ''], ['isLetter', 'char c', 'boolean', ''], ['toUpperCase', 'char c', 'char', ''], ['toLowerCase', 'char c', 'char', '']],
+  Function: [['identity', '', 'Function<T, T>', 'x -> x, pratique dans groupingBy.']],
+  Predicate: [['not', 'Predicate', 'Predicate<T>', 'Inverse un prédicat (Java 11+), ex : Predicate.not(String::isEmpty).']],
+  Objects: [['nonNull', 'Object o', 'boolean', 'Vrai si non null.'], ['isNull', 'Object o', 'boolean', 'Vrai si null.'], ['equals', 'a, b', 'boolean', 'Égalité null-safe.']],
+  Optional: [['of', 'T v', 'Optional<T>', ''], ['ofNullable', 'T v', 'Optional<T>', ''], ['empty', '', 'Optional<T>', '']],
+  System: [['out', null, 'PrintStream', 'Sortie console.']],
+  'System.out': [['println', 'x', 'void', 'Affiche une ligne dans la console.'], ['print', 'x', 'void', 'Affiche sans retour à la ligne.'], ['printf', 'format, args...', 'void', 'Affichage formaté.']],
+};
+const REF_C = {
+  Employee: EMP_C, Trade: TRADE_C, 'Map.Entry': ENTRY_C,
+  String: [...STRING_C.filter(m => m[1] === '' || ['compareTo', 'equals', 'concat'].includes(m[0])), ['valueOf', 'Object o', 'String', 'Méthode statique : convertit en String.']],
+  Integer: [['intValue', '', 'int', 'Integer -> int (pour mapToInt).'], ['sum', 'a, b', 'int', 'Pour reduce ou toMap : Integer::sum.'], ['compare', 'a, b', 'int', 'Comparator d\'entiers.'], ['max', 'a, b', 'int', ''], ['min', 'a, b', 'int', ''], ['parseInt', 'String s', 'int', 'String -> int.'], ['valueOf', 'x', 'Integer', '']],
+  Double: [['doubleValue', '', 'double', ''], ['sum', 'a, b', 'double', ''], ['compare', 'a, b', 'int', ''], ['parseDouble', 'String s', 'double', '']],
+  List: [['stream', '', 'Stream<E>', 'Pour flatMap(List::stream).'], ['size', '', 'int', ''], ['isEmpty', '', 'boolean', '']],
+  Arrays: [['stream', 'T[]', 'Stream<T>', '']],
+  Math: STATIC_C.Math, Character: STATIC_C.Character, Objects: STATIC_C.Objects,
+  ArrayList: [['new', '', 'ArrayList', 'Constructeur.']], HashSet: [['new', '', 'HashSet', 'Constructeur.']], TreeSet: [['new', '', 'TreeSet', 'Constructeur : ensemble trié.']],
+  TreeMap: [['new', '', 'TreeMap', 'Constructeur : Map triée par clé.']], HashMap: [['new', '', 'HashMap', 'Constructeur.']], LinkedHashMap: [['new', '', 'LinkedHashMap', 'Constructeur : garde l\'ordre d\'insertion.']],
+  'System.out': STATIC_C['System.out'],
+};
+const TOP_TYPES = ['Collectors', 'Comparator', 'IntStream', 'Stream', 'Arrays', 'List', 'Set', 'Map', 'Math', 'Integer', 'Double', 'String', 'Character', 'Function', 'Predicate', 'Objects', 'Optional', 'System', 'Employee', 'Trade', 'TreeMap', 'ArrayList', 'HashSet'];
+function membersOf(v){
+  if (v instanceof JStream) return v.kind === 'obj' ? [...STREAM_COMMON, ...STREAM_OBJ] : [...STREAM_PRIM, ...STREAM_COMMON.filter(m => m[0] !== 'flatMap')];
+  if (Array.isArray(v)) return LIST_C;
+  if (typeof v === 'string') return STRING_C;
+  if (v instanceof JOptional) return OPT_C(v.kind);
+  if (v instanceof JMap) return MAP_C;
+  if (v instanceof JSet) return SET_C;
+  if (v instanceof Entry) return ENTRY_C;
+  if (v instanceof Employee) return EMP_C;
+  if (v instanceof Trade) return TRADE_C;
+  if (v instanceof Stats) return STATS_C;
+  if (isNumLike(v)) return NUM_C;
+  if (typeof v === 'function') return v.__collector ? [] : v.__cmp ? CMP_INST : FUNC_C;
+  for (const k in STATIC_C) if (RT[k] === v) return STATIC_C[k];
+  if (v && v.println) return STATIC_C['System.out'];
+  return [];
+}
+function lev(a, b){
+  const d = Array.from({length: a.length + 1}, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1), i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1] ? d[i - 2][j - 2] + 1 : 99);
+  return d[a.length][b.length];
+}
+function didYouMean(name, names){
+  const lo = name.toLowerCase(); let best = null, bd = 99;
+  for (const n of new Set(names)){
+    const s = n.toLowerCase() === lo ? 0 : lev(lo, n.toLowerCase());
+    if (s < bd){ bd = s; best = n; }
+  }
+  return best && bd <= Math.max(2, Math.floor(name.length / 3)) ? best : null;
+}
+function noMethod(o, name, label){
+  const names = membersOf(o).map(m => m[0]);
+  const s = didYouMean(name, names);
+  return new JErr(`${label || jtype(o)} n'a pas de méthode ${name}().${s ? ` Tu voulais dire ${s}() ?` : ''}`);
+}
+
+/* ---------------- Exercices ---------------- */
+const CHAPTERS = [
+  {name: 'Échauffement', xp: 10, intro: 'Un stream se lit comme une phrase : une source (`list.stream()`), des étapes intermédiaires (`filter`, `map`...) et une opération terminale qui produit le résultat (`toList()`, `count()`...). Sans opération terminale, rien ne s\'exécute.'},
+  {name: 'Tri & découpe', xp: 10, intro: '`sorted` trie, `limit` et `skip` découpent, `distinct` retire les doublons. Pour trier des objets, on construit un `Comparator`, le plus souvent avec `Comparator.comparing(...)`.'},
+  {name: 'Réductions', xp: 15, intro: 'Réduire, c\'est transformer tout le stream en une seule valeur : une somme, une moyenne, un maximum... `sum()`, `average()`, `max()` et `count()` sont des réductions toutes faites. `reduce` est la version générique, à utiliser quand aucun raccourci n\'existe.'},
+  {name: 'Match & find', xp: 15, intro: 'Ces opérations répondent à une question (« y en a-t-il au moins un ? », « tous ? », « lequel est le premier ? ») et s\'arrêtent dès qu\'elles connaissent la réponse.'},
+  {name: 'Collectors', xp: 20, intro: '`collect` rassemble les éléments dans une structure : une String, un Set, une Map. La classe `Collectors` fournit les recettes toutes faites.'},
+  {name: 'groupingBy', xp: 20, intro: '`groupingBy` range les éléments dans une Map selon une clé. Le second argument, le collector « aval », dit quoi faire de chaque groupe : compter, sommer, faire une moyenne, transformer...'},
+  {name: 'flatMap & IntStream', xp: 25, intro: '`flatMap` aplatit des collections imbriquées en un seul stream. `IntStream` manipule des `int` sans boxing et offre `sum`, `average`, `range`, `rangeClosed`...'},
+  {name: 'Boss final', xp: 40, intro: 'Ici, il faut combiner plusieurs chapitres, souvent en deux temps : construire une Map, puis relancer un stream sur ses entrées avec `entrySet().stream()`.'},
+];
+const EX = [
+  // 0 — Échauffement
+  {id: 'long-words', ch: 0, title: 'Mots longs', data: ['words'], ret: 'List<String>',
+   prompt: 'Garde uniquement les mots de plus de 4 lettres, dans l\'ordre d\'origine.',
+   sol: 'words.stream()\n    .filter(w -> w.length() > 4)\n    .toList()',
+   hint: '`filter` garde les éléments pour lesquels le prédicat renvoie `true`. La longueur d\'une String : `length()`. Pour finir, `toList()` (Java 16+) ou `collect(Collectors.toList())`.'},
+  {id: 'upper', ch: 0, title: 'Tout en majuscules', data: ['words'], ret: 'List<String>',
+   prompt: 'Transforme chaque mot en majuscules.',
+   sol: 'words.stream()\n    .map(String::toUpperCase)\n    .toList()',
+   hint: '`map` transforme chaque élément. Tu peux écrire `w -> w.toUpperCase()` ou la référence de méthode `String::toUpperCase`.'},
+  {id: 'evens', ch: 0, title: 'Les pairs', data: ['nums'], ret: 'List<Integer>',
+   prompt: 'Garde uniquement les nombres pairs.',
+   sol: 'nums.stream()\n    .filter(n -> n % 2 == 0)\n    .toList()',
+   hint: 'Un nombre est pair si `n % 2 == 0`.'},
+  {id: 'squares', ch: 0, title: 'Au carré', data: ['nums'], ret: 'List<Integer>',
+   prompt: 'Calcule le carré de chaque nombre, dans le même ordre.',
+   sol: 'nums.stream()\n    .map(n -> n * n)\n    .toList()',
+   hint: '`map(n -> n * n)`.'},
+  {id: 'it-names', ch: 0, title: 'L\'équipe IT', data: ['employees'], ret: 'List<String>',
+   prompt: 'Renvoie les noms des employés du département `"IT"`.',
+   sol: 'employees.stream()\n    .filter(e -> e.getDept().equals("IT"))\n    .map(Employee::getName)\n    .toList()',
+   hint: 'Filtre d\'abord, puis `map(Employee::getName)`. Compare les String avec `equals`, jamais avec `==`.'},
+  {id: 'count-s', ch: 0, title: 'Commence par s', data: ['words'], ret: 'long',
+   prompt: 'Compte les mots qui commencent par la lettre `s`.',
+   sol: 'words.stream()\n    .filter(w -> w.startsWith("s"))\n    .count()',
+   hint: '`startsWith("s")` puis l\'opération terminale `count()`, qui renvoie un `long`.'},
+
+  // 1 — Tri & découpe
+  {id: 'sorted', ch: 1, title: 'Ordre alphabétique', data: ['words'], ret: 'List<String>',
+   prompt: 'Trie les mots par ordre alphabétique.',
+   sol: 'words.stream()\n    .sorted()\n    .toList()',
+   hint: '`sorted()` sans argument utilise l\'ordre naturel (String est Comparable).'},
+  {id: 'by-length', ch: 1, title: 'Du plus long au plus court', data: ['words'], ret: 'List<String>',
+   prompt: 'Trie les mots du plus long au plus court. À longueur égale, garde l\'ordre d\'origine.',
+   sol: 'words.stream()\n    .sorted(Comparator.comparing(String::length).reversed())\n    .toList()',
+   hint: '`Comparator.comparing(String::length)` trie par longueur croissante, `.reversed()` inverse. Le tri des streams est stable. Piège javac : `comparing(w -> w.length()).reversed()` ne compile pas (inférence de type), d\'où la référence de méthode.'},
+  {id: 'top3', ch: 1, title: 'Podium des salaires', data: ['employees'], ret: 'List<String>',
+   prompt: 'Les noms des 3 employés les mieux payés, du salaire le plus haut au plus bas.',
+   sol: 'employees.stream()\n    .sorted(Comparator.comparingInt(Employee::getSalary).reversed())\n    .limit(3)\n    .map(Employee::getName)\n    .toList()',
+   hint: 'Trie par salaire décroissant (`comparingInt(...).reversed()`), coupe avec `limit(3)`, puis récupère les noms.'},
+  {id: 'distinct', ch: 1, title: 'Sans doublons', data: ['nums'], ret: 'List<Integer>',
+   prompt: 'Supprime les doublons et trie les nombres par ordre croissant.',
+   sol: 'nums.stream()\n    .distinct()\n    .sorted()\n    .toList()',
+   hint: '`distinct()` puis `sorted()`.'},
+  {id: 'page2', ch: 1, title: 'Pagination', data: ['words'], ret: 'List<String>',
+   prompt: 'Imagine un site qui affiche les mots par pages de 4. Trie les mots par ordre alphabétique, puis renvoie seulement ceux de la page 2, c\'est-à-dire du 5e au 8e mot de la liste triée. Exemple : avec `[a, b, c, d, e, f, g, h, i]`, la page 2 donne `[e, f, g, h]`.',
+   sol: 'words.stream()\n    .sorted()\n    .skip(4)\n    .limit(4)\n    .toList()',
+   hint: '`skip(n)` saute les n premiers éléments, `limit(n)` garde les n suivants. Pour la page 2, il faut sauter la page 1 (4 mots) puis garder 4 mots. En général, page p de taille t : `skip((p - 1) * t).limit(t)`.'},
+  {id: 'multi-sort', ch: 1, title: 'Tri à deux critères', data: ['employees'], ret: 'List<String>',
+   prompt: 'Trie les employés par département (ordre alphabétique), puis par salaire décroissant dans chaque département. Renvoie leurs noms.',
+   sol: 'employees.stream()\n    .sorted(Comparator.comparing(Employee::getDept)\n        .thenComparing(Employee::getSalary, Comparator.reverseOrder()))\n    .map(Employee::getName)\n    .toList()',
+   hint: '`Comparator.comparing(Employee::getDept).thenComparing(Employee::getSalary, Comparator.reverseOrder())`. Attention : un `.reversed()` à la fin inverserait tout le comparateur, départements compris.'},
+
+  // 2 — Réductions
+  {id: 'sum', ch: 2, title: 'La somme', data: ['nums'], ret: 'int',
+   prompt: 'Calcule la somme de tous les nombres.',
+   sol: 'nums.stream()\n    .mapToInt(Integer::intValue)\n    .sum()',
+   hint: '`Stream<Integer>` n\'a pas de `sum()`. Passe par un `IntStream` avec `mapToInt(Integer::intValue)` (ou `mapToInt(n -> n)`). Autre option : `reduce(0, Integer::sum)`.'},
+  {id: 'it-payroll', ch: 2, title: 'Masse salariale IT', data: ['employees'], ret: 'int',
+   prompt: 'Calcule la somme des salaires du département `"IT"`.',
+   sol: 'employees.stream()\n    .filter(e -> e.getDept().equals("IT"))\n    .mapToInt(Employee::getSalary)\n    .sum()',
+   hint: 'Filtre, puis `mapToInt(Employee::getSalary).sum()`.'},
+  {id: 'avg-age', ch: 2, title: 'Âge moyen', data: ['employees'], ret: 'double',
+   prompt: 'Calcule l\'âge moyen des employés (0 si la liste est vide).',
+   sol: 'employees.stream()\n    .mapToInt(Employee::getAge)\n    .average()\n    .orElse(0)',
+   hint: '`average()` sur un IntStream renvoie un `OptionalDouble` : déballe-le avec `orElse(0)`.'},
+  {id: 'biggest-trade', ch: 2, title: 'Le plus gros ticket', data: ['trades'], ret: 'int',
+   prompt: 'Renvoie l\'id du trade qui a le plus gros notionnel (`getNotional()`).',
+   sol: 'trades.stream()\n    .max(Comparator.comparingDouble(Trade::getNotional))\n    .map(Trade::getId)\n    .orElseThrow()',
+   hint: '`max(Comparator...)` renvoie un `Optional<Trade>`. Ensuite `map(Trade::getId)` sur l\'Optional, puis `orElseThrow()`.'},
+  {id: 'product', ch: 2, title: 'reduce à la main', data: ['nums'], ret: 'int',
+   prompt: 'Calcule le produit des 5 premiers nombres de la liste avec `reduce`.',
+   sol: 'nums.stream()\n    .limit(5)\n    .reduce(1, (a, b) -> a * b)',
+   hint: '`reduce(identité, opération)` : l\'identité de la multiplication est 1.'},
+  {id: 'longest', ch: 2, title: 'Le mot le plus long', data: ['words'], ret: 'String',
+   prompt: 'Renvoie le mot le plus long (chaîne vide si la liste est vide). En cas d\'égalité, le premier rencontré.',
+   sol: 'words.stream()\n    .max(Comparator.comparingInt(String::length))\n    .orElse("")',
+   hint: 'Sur un `Stream<String>`, `max` attend un Comparator : `Comparator.comparingInt(String::length)`.'},
+
+  // 3 — Match & find
+  {id: 'any-big', ch: 3, title: 'Un ticket à plus d\'un million ?', data: ['trades'], ret: 'boolean',
+   prompt: 'Existe-t-il au moins un trade dont le notionnel dépasse 1 000 000 ?',
+   sol: 'trades.stream()\n    .anyMatch(t -> t.getNotional() > 1_000_000)',
+   hint: '`anyMatch(prédicat)` s\'arrête dès qu\'un élément correspond.'},
+  {id: 'all-25', ch: 3, title: 'Tous au-dessus de 25 ans ?', data: ['employees'], ret: 'boolean',
+   prompt: 'Tous les employés ont-ils strictement plus de 25 ans ?',
+   sol: 'employees.stream()\n    .allMatch(e -> e.getAge() > 25)',
+   hint: '`allMatch`.'},
+  {id: 'first-20', ch: 3, title: 'Le premier au-dessus de 20', data: ['nums'], ret: 'int',
+   prompt: 'Renvoie le premier nombre strictement supérieur à 20, ou -1 s\'il n\'y en a aucun.',
+   sol: 'nums.stream()\n    .filter(n -> n > 20)\n    .findFirst()\n    .orElse(-1)',
+   hint: '`filter`, puis `findFirst()` qui renvoie un `Optional`, puis `orElse(-1)`.'},
+  {id: 'none-z', ch: 3, title: 'Pas de z', data: ['words'], ret: 'boolean',
+   prompt: 'Vérifie qu\'aucun mot ne contient la lettre `z`.',
+   sol: 'words.stream()\n    .noneMatch(w -> w.contains("z"))',
+   hint: '`noneMatch(w -> w.contains("z"))`.'},
+
+  // 4 — Collectors
+  {id: 'join', ch: 4, title: 'Tout sur une ligne', data: ['words'], ret: 'String',
+   prompt: 'Assemble les mots en une seule String, séparés par `" | "`.',
+   sol: 'words.stream()\n    .collect(Collectors.joining(" | "))',
+   hint: '`Collectors.joining(séparateur)`. Il existe aussi `joining(sep, préfixe, suffixe)`.'},
+  {id: 'currencies', ch: 4, title: 'Devises traitées', data: ['trades'], ret: 'Set<String>',
+   prompt: 'Renvoie l\'ensemble des devises utilisées par les trades.',
+   sol: 'trades.stream()\n    .map(Trade::getCurrency)\n    .collect(Collectors.toSet())',
+   hint: '`map(Trade::getCurrency)` puis `collect(Collectors.toSet())`.'},
+  {id: 'name-salary', ch: 4, title: 'Annuaire des salaires', data: ['employees'], ret: 'Map<String, Integer>',
+   prompt: 'Construis une Map nom → salaire.',
+   sol: 'employees.stream()\n    .collect(Collectors.toMap(Employee::getName, Employee::getSalary))',
+   hint: '`Collectors.toMap(fonctionClé, fonctionValeur)`.'},
+  {id: 'qty-merge', ch: 4, title: 'Quantité par instrument', data: ['trades'], ret: 'Map<String, Integer>',
+   prompt: 'Construis une Map instrument → quantité totale. Attention, un même instrument apparaît dans plusieurs trades.',
+   sol: 'trades.stream()\n    .collect(Collectors.toMap(Trade::getInstrument, Trade::getQuantity, Integer::sum))',
+   hint: 'Sans fonction de fusion, `toMap` lève une `IllegalStateException: Duplicate key`. Ajoute un 3e argument : `Integer::sum`.'},
+
+  // 5 — groupingBy
+  {id: 'names-by-dept', ch: 5, title: 'Qui est dans quel service', data: ['employees'], ret: 'Map<String, List<String>>',
+   prompt: 'Regroupe les noms des employés par département.',
+   sol: 'employees.stream()\n    .collect(Collectors.groupingBy(Employee::getDept,\n        Collectors.mapping(Employee::getName, Collectors.toList())))',
+   hint: '`groupingBy(Employee::getDept)` seul donnerait des listes d\'Employee. Ajoute un collector en aval : `Collectors.mapping(Employee::getName, Collectors.toList())`.'},
+  {id: 'count-by-dept', ch: 5, title: 'Effectifs', data: ['employees'], ret: 'Map<String, Long>',
+   prompt: 'Compte le nombre d\'employés par département.',
+   sol: 'employees.stream()\n    .collect(Collectors.groupingBy(Employee::getDept, Collectors.counting()))',
+   hint: '`groupingBy(..., Collectors.counting())`. Les valeurs sont des `Long`.'},
+  {id: 'avg-by-dept', ch: 5, title: 'Salaire moyen par service', data: ['employees'], ret: 'Map<String, Double>',
+   prompt: 'Calcule le salaire moyen par département.',
+   sol: 'employees.stream()\n    .collect(Collectors.groupingBy(Employee::getDept,\n        Collectors.averagingInt(Employee::getSalary)))',
+   hint: '`Collectors.averagingInt(Employee::getSalary)` en aval du `groupingBy`.'},
+  {id: 'buy-sell', ch: 5, title: 'Achats contre ventes', data: ['trades'], ret: 'Map<Boolean, Long>',
+   prompt: 'Sépare les trades en achats (`"BUY"` → true) et ventes (false), et compte-les.',
+   sol: 'trades.stream()\n    .collect(Collectors.partitioningBy(t -> t.getSide().equals("BUY"),\n        Collectors.counting()))',
+   hint: '`Collectors.partitioningBy(prédicat, Collectors.counting())`. Contrairement à `groupingBy`, les deux clés true et false sont toujours présentes.'},
+  {id: 'notional-by-trader', ch: 5, title: 'Volume par trader', data: ['trades'], ret: 'Map<String, Double>',
+   prompt: 'Calcule le notionnel total traité par chaque trader.',
+   sol: 'trades.stream()\n    .collect(Collectors.groupingBy(Trade::getTrader,\n        Collectors.summingDouble(Trade::getNotional)))',
+   hint: '`Collectors.summingDouble(Trade::getNotional)` en aval.'},
+
+  // 6 — flatMap & IntStream
+  {id: 'all-words', ch: 6, title: 'Aplatir les phrases', data: ['sentences'], ret: 'List<String>',
+   prompt: 'Renvoie tous les mots de toutes les phrases, dans l\'ordre (les mots sont séparés par un espace).',
+   sol: 'sentences.stream()\n    .flatMap(s -> Arrays.stream(s.split(" ")))\n    .toList()',
+   hint: '`split(" ")` donne un `String[]`. `flatMap` attend un Stream : `Arrays.stream(s.split(" "))`.'},
+  {id: 'euler', ch: 6, title: 'Multiples de 3 ou 5', data: ['n'], ret: 'int', start: 'IntStream.rangeClosed(1, n)\n    ',
+   prompt: 'Calcule la somme de tous les entiers de 1 à `n` (inclus) qui sont multiples de 3 ou de 5.',
+   sol: 'IntStream.rangeClosed(1, n)\n    .filter(i -> i % 3 == 0 || i % 5 == 0)\n    .sum()',
+   hint: '`IntStream.rangeClosed(1, n)` inclut n, `range(1, n)` l\'exclut.'},
+  {id: 'squares-range', ch: 6, title: 'Repasser en objets', data: ['n'], ret: 'List<Integer>', start: 'IntStream.rangeClosed(1, n)\n    ',
+   prompt: 'Renvoie la liste des carrés de 1 à `n` inclus.',
+   sol: 'IntStream.rangeClosed(1, n)\n    .map(i -> i * i)\n    .boxed()\n    .toList()',
+   hint: 'Un `IntStream` n\'a ni `toList()` ni `collect(Collectors...)` : il faut d\'abord `boxed()` pour obtenir un `Stream<Integer>`.'},
+  {id: 'letters', ch: 6, title: 'L\'alphabet des mots', data: ['words'], ret: 'String',
+   prompt: 'Toutes les lettres distinctes utilisées dans les mots, triées, collées en une seule String.',
+   sol: 'words.stream()\n    .flatMap(w -> Arrays.stream(w.split("")))\n    .distinct()\n    .sorted()\n    .collect(Collectors.joining())',
+   hint: '`w.split("")` découpe en caractères. Puis `flatMap`, `distinct`, `sorted`, et `Collectors.joining()`.'},
+  {id: 'word-freq', ch: 6, title: 'Fréquence des mots', data: ['sentences'], ret: 'Map<String, Long>',
+   prompt: 'Compte combien de fois apparaît chaque mot dans l\'ensemble des phrases.',
+   sol: 'sentences.stream()\n    .flatMap(s -> Arrays.stream(s.split(" ")))\n    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))',
+   hint: 'Aplatis d\'abord, puis `groupingBy(Function.identity(), Collectors.counting())` (ou `w -> w` à la place de `Function.identity()`).'},
+
+  // 7 — Boss
+  {id: 'top-trader', ch: 7, title: 'Le trader le plus actif', data: ['trades'], ret: 'String',
+   prompt: 'Renvoie le nom du trader qui a le plus gros notionnel total.',
+   sol: 'trades.stream()\n    .collect(Collectors.groupingBy(Trade::getTrader,\n        Collectors.summingDouble(Trade::getNotional)))\n    .entrySet().stream()\n    .max(Map.Entry.comparingByValue())\n    .map(Map.Entry::getKey)\n    .orElse("")',
+   hint: 'Deux temps : une Map trader → total, puis un deuxième stream sur `entrySet()` avec `max(Map.Entry.comparingByValue())` et `map(Map.Entry::getKey)`.'},
+  {id: 'best-dept', ch: 7, title: 'Le service le mieux payé', data: ['employees'], ret: 'String',
+   prompt: 'Renvoie le département dont le salaire moyen est le plus élevé.',
+   sol: 'employees.stream()\n    .collect(Collectors.groupingBy(Employee::getDept,\n        Collectors.averagingInt(Employee::getSalary)))\n    .entrySet().stream()\n    .max(Map.Entry.comparingByValue())\n    .map(Map.Entry::getKey)\n    .orElse("")',
+   hint: 'Même schéma que le trader le plus actif, avec `averagingInt`.'},
+  {id: 'net-position', ch: 7, title: 'Position nette', data: ['trades'], ret: 'Map<String, Integer>',
+   prompt: 'Calcule la position nette par instrument : une quantité achetée (`BUY`) compte en positif, une quantité vendue (`SELL`) en négatif.',
+   sol: 'trades.stream()\n    .collect(Collectors.groupingBy(Trade::getInstrument,\n        Collectors.summingInt(t -> t.getSide().equals("BUY") ? t.getQuantity() : -t.getQuantity())))',
+   hint: '`summingInt` accepte n\'importe quelle lambda : un ternaire sur `getSide()` fait l\'affaire.'},
+  {id: 'top2-by-class', ch: 7, title: 'Top 2 par classe d\'actifs', data: ['trades'], ret: 'Map<String, List<Integer>>',
+   prompt: 'Pour chaque classe d\'actifs, renvoie les ids des 2 trades au plus gros notionnel, du plus gros au plus petit.',
+   sol: 'trades.stream()\n    .collect(Collectors.groupingBy(Trade::getAssetClass,\n        Collectors.collectingAndThen(Collectors.toList(), list -> list.stream()\n            .sorted(Comparator.comparing(Trade::getNotional).reversed())\n            .limit(2)\n            .map(Trade::getId)\n            .toList())))',
+   hint: '`Collectors.collectingAndThen(Collectors.toList(), list -> ...)` te laisse retravailler chaque groupe avec un nouveau stream.'},
+];
+EX.forEach((e, i) => { e.n = i + 1; if (!e.start) e.start = e.data[0] + '.stream()\n    '; });
+const SANDBOX = {id: 'sandbox', ch: -1, title: 'Bac à sable', data: ['words', 'nums', 'employees', 'trades', 'sentences', 'n'], ret: 'var',
+  prompt: 'Écris ce que tu veux avec toutes les données disponibles. Pas de correction ici : le résultat et le type sont simplement affichés. `System.out.println` marche aussi dans un `forEach` ou un `peek`.',
+  start: 'trades.stream()\n    .filter(t -> t.getAssetClass().equals("EQUITY"))\n    .collect(Collectors.groupingBy(Trade::getTrader, Collectors.counting()))'};
+</script>
+
+<script>
+/* ============================ Interface ============================ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const md = s => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
+const ALL = [...EX, SANDBOX];
+const KEY = 'streamdojo.v1';
+let P = {solved: {}, code: {}, hint: {}, sol: {}, last: 0};
+try { const raw = localStorage.getItem(KEY); if (raw) P = Object.assign(P, JSON.parse(raw)); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) {} };
+let idx = Math.min(P.last || 0, ALL.length - 1);
+const expCache = {};
+
+const RANKS = [[0, 'Stagiaire'], [60, 'Junior'], [180, 'Confirmé'], [340, 'Senior'], [520, 'Lead dev'], [700, 'Architecte']];
+function xpOf(ex){ const r = P.solved[ex.id]; return r ? r.xp : 0; }
+function totalXp(){ return EX.reduce((s, e) => s + xpOf(e), 0); }
+function updateHeader(){
+  const done = EX.filter(e => P.solved[e.id]).length;
+  $('#bar').style.width = (done / EX.length * 100) + '%';
+  $('#count').textContent = `${done} / ${EX.length} exercices`;
+  const xp = totalXp(); $('#xp').textContent = xp;
+  $('#rankName').textContent = RANKS.filter(r => xp >= r[0]).pop()[1];
+}
+function dotClass(ex){
+  const s = P.solved[ex.id];
+  if (s) return s.helped ? 'dot helped' : 'dot done';
+  if (P.sol[ex.id]) return 'dot seen';
+  return 'dot';
+}
+
+function renderNav(){
+  let h = '', opts = '';
+  CHAPTERS.forEach((c, ci) => {
+    const list = EX.filter(e => e.ch === ci);
+    const done = list.filter(e => P.solved[e.id]).length;
+    h += `<div class="chap"><h3>${esc(c.name)} <span>${done}/${list.length}</span></h3>`;
+    opts += `<optgroup label="${esc(c.name)}">`;
+    list.forEach(e => {
+      const i = ALL.indexOf(e);
+      h += `<button class="item" data-i="${i}" aria-current="${i === idx}"><span class="${dotClass(e)}"></span><span class="n">${e.n}</span>${esc(e.title)}</button>`;
+      opts += `<option value="${i}" ${i === idx ? 'selected' : ''}>${e.n}. ${esc(e.title)}${P.solved[e.id] ? '  ✓' : ''}</option>`;
+    });
+    h += '</div>'; opts += '</optgroup>';
+  });
+  const si = ALL.indexOf(SANDBOX);
+  h += `<div class="chap"><h3>Libre</h3><button class="item" data-i="${si}" aria-current="${si === idx}"><span class="dot"></span><span class="n">∞</span>Bac à sable</button></div>`;
+  opts += `<option value="${si}" ${si === idx ? 'selected' : ''}>Bac à sable</option>`;
+  $('#nav').innerHTML = h; $('#picker').innerHTML = opts;
+}
+$('#nav').addEventListener('click', e => { const b = e.target.closest('.item'); if (b) go(+b.dataset.i); });
+$('#picker').addEventListener('change', e => go(+e.target.value));
+
+function javaLit(v){
+  if (typeof v === 'string') return JSON.stringify(v);
+  return String(v);
+}
+function contextCode(ex){
+  const lines = [];
+  for (const v of ex.data){
+    const x = PACKS[v][0];
+    if (v === 'n') lines.push(`int n = ${x};`);
+    else if (v === 'nums') lines.push(`List<Integer> nums = List.of(${x.join(', ')});`);
+    else if (v === 'words' || v === 'sentences') lines.push(`List<String> ${v} = List.of(\n    ${x.map(javaLit).join(', ').replace(/(.{1,64})(, |$)/g, '$1$2\n    ').trim()});`);
+    else if (v === 'employees') lines.push(`List<Employee> employees = ...;  // ${x.length} employés, voir le tableau`);
+    else if (v === 'trades') lines.push(`List<Trade> trades = ...;  // ${x.length} trades, voir le tableau`);
+  }
+  return lines.join('\n');
+}
+const CLASSES = {
+  employees: 'class Employee {\n    String getName();\n    String getDept();\n    int    getSalary();\n    int    getAge();\n    String getCity();\n}',
+  trades: 'class Trade {\n    int    getId();\n    String getTrader();\n    String getInstrument();\n    String getAssetClass();  // "EQUITY", "RATES", "FX"\n    String getSide();        // "BUY" ou "SELL"\n    int    getQuantity();\n    double getPrice();\n    double getNotional();    // quantity * price\n    String getCurrency();\n}',
+};
+function table(v){
+  const rows = PACKS[v][0];
+  if (v === 'employees') return `<div class="tablewrap"><table><thead><tr><th>name</th><th>dept</th><th>salary</th><th>age</th><th>city</th></tr></thead><tbody>${rows.map(e => `<tr><td>${esc(e.name)}</td><td>${e.dept}</td><td class="num">${e.salary}</td><td class="num">${e.age}</td><td>${esc(e.city)}</td></tr>`).join('')}</tbody></table></div>`;
+  if (v === 'trades') return `<div class="tablewrap"><table><thead><tr><th>id</th><th>trader</th><th>instrument</th><th>class</th><th>side</th><th>qty</th><th>price</th><th>notional</th><th>ccy</th></tr></thead><tbody>${rows.map(t => `<tr><td class="num">${t.id}</td><td>${esc(t.trader)}</td><td>${esc(t.instrument)}</td><td>${t.assetClass}</td><td>${t.side}</td><td class="num">${t.quantity.toLocaleString('fr-FR')}</td><td class="num">${t.price}</td><td class="num">${(+t.getNotional()).toLocaleString('fr-FR', {maximumFractionDigits: 2})}</td><td>${t.currency}</td></tr>`).join('')}</tbody></table></div>`;
+  return '';
+}
+
+function renderBrief(){
+  const ex = ALL[idx];
+  const isSand = ex === SANDBOX;
+  const chap = isSand ? 'Mode libre' : `Chapitre ${ex.ch + 1} · ${CHAPTERS[ex.ch].name}`;
+  let h = `<div class="eyebrow">${esc(chap)}</div><h1>${esc(ex.title)}</h1>`;
+  if (!isSand){
+    const s = P.solved[ex.id];
+    h += `<div class="pills"><span class="pill">#${ex.n}</span><span class="pill xp">+${CHAPTERS[ex.ch].xp} XP</span><span class="pill">renvoie ${esc(ex.ret)}</span>${s ? `<span class="pill" style="color:var(--ok);border-color:var(--ok)">résolu · ${s.xp} XP</span>` : ''}</div>`;
+  }
+  if (!isSand && EX.find(e => e.ch === ex.ch) === ex) h += `<div class="intro"><b>Le principe</b> ${md(CHAPTERS[ex.ch].intro)}</div>`;
+  h += `<p class="prompt">${md(ex.prompt)}</p>`;
+  if (!isSand){
+    h += `<div class="label">Données (test visible)</div><pre class="ctx">${highlight(contextCode(ex))}</pre>`;
+    for (const v of ex.data) if (CLASSES[v]) h += `<div class="label">Modèle</div><pre class="ctx">${highlight(CLASSES[v])}</pre><details class="data"${matchMedia('(max-width: 860px)').matches ? '' : ' open'}><summary>Voir les ${PACKS[v][0].length} ${v === 'trades' ? 'trades' : 'employés'}</summary>${table(v)}</details>`;
+    h += `<div class="helpers"><button class="ghost" id="hintBtn">${P.hint[ex.id] ? 'Indice' : 'Afficher un indice'}</button><button class="ghost" id="solBtn">Voir la solution</button></div>`;
+    h += `<div id="hintBox"></div><div id="solBox"></div>`;
+  } else {
+    h += `<div class="label">Données disponibles</div><pre class="ctx">${highlight('List<String>   words;      // ' + PACKS.words[0].length + ' mots\nList<Integer>  nums;       // ' + PACKS.nums[0].length + ' entiers\nList<String>   sentences;  // ' + PACKS.sentences[0].length + ' phrases\nList<Employee> employees;  // ' + PACKS.employees[0].length + ' employés\nList<Trade>    trades;     // ' + PACKS.trades[0].length + ' trades\nint            n;          // ' + PACKS.n[0])}</pre>`;
+    h += `<div class="label">Modèle</div><pre class="ctx">${highlight(CLASSES.employees + '\n\n' + CLASSES.trades)}</pre>${table('employees')}${table('trades')}`;
+  }
+  $('#briefPane').innerHTML = h;
+  if (!isSand){
+    if (P.hint[ex.id]) showHint();
+    $('#hintBtn').onclick = showHint;
+    let armed = false;
+    $('#solBtn').onclick = () => {
+      if (!P.solved[ex.id] && !armed){ armed = true; $('#solBtn').textContent = 'Confirmer : pas d\'XP pour cet exercice'; $('#solBtn').classList.add('warn'); return; }
+      P.sol[ex.id] = true; save(); renderNav();
+      $('#solBox').innerHTML = `<div class="label">Solution</div><pre class="ctx">${highlight(ex.sol)}</pre><div class="helpers" style="margin-top:10px"><button class="ghost" id="copySol">La copier dans l'éditeur</button></div>`;
+      $('#solBtn').hidden = true;
+      $('#copySol').onclick = () => { setCode(ex.sol); };
+    };
+  }
+}
+function showHint(){
+  const ex = ALL[idx];
+  if (!P.hint[ex.id]){ P.hint[ex.id] = true; save(); }
+  $('#hintBox').innerHTML = `<div class="hint">${md(ex.hint)}</div>`;
+  $('#hintBtn').hidden = true;
+}
+
+/* --- éditeur --- */
+const ta = $('#code'), hl = $('#hl');
+const KW = /^(new|return|true|false|null|var|final|int|long|double|boolean|char|instanceof|if|else)$/;
+function highlight(src){
+  const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*"?)|('(?:[^'\\\n]|\\.)*'?)|(\b\d[\d_]*(?:\.\d+)?[LlDdFf]?\b)|(->|::)|(\b[A-Za-z_]\w*\b)(\s*\()?/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(src))){
+    out += esc(src.slice(last, m.index)); last = re.lastIndex;
+    if (m[1]) out += `<span class="sx-c">${esc(m[1])}</span>`;
+    else if (m[2] || m[3]) out += `<span class="sx-s">${esc(m[2] || m[3])}</span>`;
+    else if (m[4]) out += `<span class="sx-n">${esc(m[4])}</span>`;
+    else if (m[5]) out += `<span class="sx-o">${esc(m[5])}</span>`;
+    else if (m[6]){
+      const w = m[6];
+      if (KW.test(w)) out += `<span class="sx-k">${w}</span>`;
+      else if (/^[A-Z]/.test(w)) out += `<span class="sx-t">${w}</span>`;
+      else if (m[7]) out += `<span class="sx-m">${w}</span>`;
+      else out += w;
+      if (m[7]) out += esc(m[7]);
+    }
+  }
+  return out + esc(src.slice(last));
+}
+function syncEditor(){ hl.innerHTML = highlight(ta.value) + '\n'; ta.style.height = 'auto'; ta.style.height = Math.max(190, ta.scrollHeight) + 'px'; }
+function setCode(c){ ta.value = c; P.code[ALL[idx].id] = c; save(); syncEditor(); ta.focus(); }
+ta.addEventListener('input', e => { P.code[ALL[idx].id] = ta.value; save(); syncEditor(); if (e.inputType && (e.inputType.startsWith('insert') && e.inputType !== 'insertLineBreak' || (e.inputType.startsWith('delete') && AC.open))) acUpdate(); else acClose(); });
+ta.addEventListener('keydown', e => {
+  if (AC.open){
+    const n = Math.min(AC.items.length, 60);
+    if (e.key === 'ArrowDown'){ e.preventDefault(); AC.sel = (AC.sel + 1) % n; acRender(); return; }
+    if (e.key === 'ArrowUp'){ e.preventDefault(); AC.sel = (AC.sel - 1 + n) % n; acRender(); return; }
+    if ((e.key === 'Enter' && !e.ctrlKey && !e.metaKey) || e.key === 'Tab'){ e.preventDefault(); acAccept(); return; }
+    if (e.key === 'Escape'){ e.preventDefault(); acClose(); return; }
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) acClose();
+  }
+  if ((e.ctrlKey || e.metaKey) && (e.key === ' ' || e.code === 'Space')){ e.preventDefault(); AC.forced = true; acUpdate(); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter'){ e.preventDefault(); acClose(); if (lastWin) go(idx + 1); else run(); return; }
+  if (e.key === 'Tab' && !e.shiftKey){ e.preventDefault(); insert('    '); return; }
+  if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey){
+    e.preventDefault();
+    const before = ta.value.slice(0, ta.selectionStart);
+    const line = before.slice(before.lastIndexOf('\n') + 1);
+    let ind = line.match(/^\s*/)[0];
+    if (/[({]\s*$/.test(line)) ind += '    ';
+    insert('\n' + ind);
+  }
+});
+function insert(t){ const s = ta.selectionStart, en = ta.selectionEnd; ta.setRangeText(t, s, en, 'end'); ta.dispatchEvent(new Event('input')); }
+
+/* --- autocomplétion façon IDE --- */
+const acBox = $('#ac'), mirror = $('#mirror');
+const AC = {open: false, items: [], sel: 0, start: 0, mode: 'dot', cache: new Map()};
+function inString(text){ const line = text.slice(text.lastIndexOf('\n') + 1); let q = null; for (let i = 0; i < line.length; i++){ const c = line[i]; if (q){ if (c === '\\') i++; else if (c === q) q = null; } else if (c === '"' || c === "'") q = c; } return !!q; }
+function receiverBefore(s, end){
+  let i = end - 1, depth = 0;
+  while (i >= 0){
+    const c = s[i];
+    if (c === ')' || c === ']'){ depth++; i--; continue; }
+    if (c === '(' || c === '['){ if (depth === 0) break; depth--; i--; continue; }
+    if (depth > 0){ i--; continue; }
+    if (/[\w$.]/.test(c)){ i--; continue; }
+    if (c === '"'){ const k = s.lastIndexOf('"', i - 1); if (k < 0) break; i = k - 1; continue; }
+    if (/\s/.test(c)){
+      let j = i; while (j >= 0 && /\s/.test(s[j])) j--;
+      if (s[i + 1] === '.' && j >= 0 && /[\w)\]"]/.test(s[j])){ i = j; continue; }
+      break;
+    }
+    break;
+  }
+  return s.slice(i + 1, end).replace(/\s+(?=\.)/g, '').trim();
+}
+// Paramètres de lambda visibles au curseur, liés à un élément d'exemple
+function lambdaBindings(s, ds){
+  const stack = []; let q = null;
+  for (let i = 0; i < s.length; i++){
+    const c = s[i];
+    if (q){ if (c === '\\') i++; else if (c === q) q = null; continue; }
+    if (c === '"' || c === "'"){ q = c; continue; }
+    if (c === '(' || c === '{') stack.push({c, i});
+    else if ((c === ')' || c === '}') && stack.length) stack.pop();
+  }
+  const binds = {};
+  const env = () => Object.assign({}, ds, binds);
+  const calls = stack.filter(f => f.c === '(').map(f => {
+    const before = s.slice(0, f.i), m = before.match(/([A-Za-z_]\w*)\s*$/);
+    const name = m ? m[1] : '';
+    const dotAt = m ? before.length - m[0].length - 1 : -1;
+    const recv = dotAt >= 0 && s[dotAt] === '.' ? receiverBefore(s, dotAt) : null;
+    return {pos: f.i, name, recv};
+  });
+  for (let k = 0; k < calls.length; k++){
+    const call = calls[k];
+    const end = k + 1 < calls.length ? calls[k + 1].pos : s.length;
+    const inner = s.slice(call.pos + 1, end);
+    const segs = []; let d = 0, cur = '', qq = null;
+    for (const ch of inner){
+      if (qq){ cur += ch; if (ch === qq) qq = null; continue; }
+      if (ch === '"' || ch === "'"){ qq = ch; cur += ch; continue; }
+      if ('([{'.includes(ch)) d++; if (')]}'.includes(ch)) d--;
+      if (ch === ',' && d === 0){ segs.push(cur); cur = ''; } else cur += ch;
+    }
+    segs.push(cur);
+    const lm = segs[segs.length - 1].match(/^\s*(?:\(([^()]*)\)|([A-Za-z_]\w*))\s*->/);
+    if (!lm) continue;
+    const params = lm[2] ? [lm[2]] : lm[1].split(',').map(p => p.trim().split(/\s+/).pop()).filter(Boolean);
+    // trouve l'élément d'exemple : le receveur de cet appel, sinon celui d'un appel englobant
+    let sample, found = false;
+    for (let j = k; j >= 0 && !found; j--){
+      const c = calls[j];
+      if (!c.recv || /^[A-Z]/.test(c.recv)) continue;
+      try {
+        const r = evalJava(c.recv, env());
+        if (r instanceof JStream){ const a = r._arr(); sample = calls.slice(j + 1, k + 1).some(x => x.name === 'collectingAndThen') ? a : a[0]; found = true; }
+        else if (Array.isArray(r)){ sample = r[0]; found = true; }
+        else if (r instanceof JOptional){ sample = r.v; found = true; }
+        else if (r instanceof JMap && c.name === 'forEach'){ const e = r._entries()[0]; if (e){ binds[params[0]] = e[0]; if (params[1]) binds[params[1]] = e[1]; } found = 'map'; }
+      } catch (e) { /* receveur pas encore évaluable */ }
+    }
+    if (found && found !== 'map' && sample !== undefined) params.forEach(p => { binds[p] = sample; });
+  }
+  return binds;
+}
+function computeItems(){
+  const pos = ta.selectionStart, text = ta.value.slice(0, pos);
+  if (inString(text)) return null;
+  const wm = text.match(/[A-Za-z_$][\w$]*$/);
+  const partial = wm ? wm[0] : '';
+  const start = pos - partial.length;
+  const before = text.slice(0, start);
+  const ex = ALL[idx], ds = dataset(ex.data, 0);
+  let mode, list = [];
+  if (/::\s*$/.test(before)) mode = 'ref';
+  else if (/\.\s*$/.test(before)) mode = 'dot';
+  else mode = 'top';
+  if (mode !== 'top'){
+    const opAt = before.replace(/\s*$/, '').length - (mode === 'ref' ? 2 : 1);
+    const recv = receiverBefore(before, opAt);
+    if (!recv || /^\d/.test(recv)) return null;
+    const binds = lambdaBindings(before, ds);
+    const head = recv.split('.')[0];
+    const isValue = head in ds || head in binds;
+    const key = mode + '|' + recv + '|' + idx + '|' + Object.keys(binds).map(k => k + '=' + jstr(binds[k])).join(',');
+    if (AC.cache.has(key)) list = AC.cache.get(key);
+    else {
+      if (mode === 'ref' && !isValue && REF_C[recv]) list = REF_C[recv];
+      else if (mode === 'dot' && !isValue && STATIC_C[recv]) list = STATIC_C[recv];
+      else {
+        try { list = membersOf(evalJava(recv, Object.assign({}, ds, binds))); }
+        catch (e) { list = /stream\(\)$/.test(recv) ? [...STREAM_COMMON, ...STREAM_OBJ] : []; }
+      }
+      if (mode === 'ref') list = list.filter(m => m[1] !== null);
+      AC.cache.set(key, list);
+    }
+    list = list.map(m => ({name: m[0], params: m[1], ret: m[2], doc: m[3], kind: m[1] === null ? 'f' : 'm'}));
+  } else {
+    const binds = lambdaBindings(before, ds);
+    if (/(?:new|\w)\s+$/.test(before) && !/(?:return|->)\s+$/.test(before)) return null;
+    list = [
+      ...Object.keys(binds).map(n => ({name: n, ret: jtype(binds[n]), doc: 'Paramètre de la lambda.', kind: 'v'})),
+      ...ex.data.map(n => ({name: n, ret: jtype(ds[n]).replace('<?>', ''), doc: 'Donnée de l\'exercice.', kind: 'v'})),
+      ...TOP_TYPES.map(n => ({name: n, ret: 'classe', doc: '', kind: 'c', params: null})),
+    ];
+    if (!AC.forced && partial.length < 2) return null;
+  }
+  const lo = partial.toLowerCase();
+  const seen = new Set();
+  const uniq = list.filter(m => !seen.has(m.name) && seen.add(m.name));
+  const starts = uniq.filter(m => m.name.toLowerCase().startsWith(lo));
+  const contains = lo && mode !== 'top' ? uniq.filter(m => !m.name.toLowerCase().startsWith(lo) && m.name.toLowerCase().includes(lo)) : [];
+  const items = [...starts, ...contains];
+  if (!items.length) return null;
+  if (mode === 'top' && items.length === 1 && items[0].name === partial) return null;
+  return {items, start, mode, partial};
+}
+function acUpdate(){
+  const r = computeItems();
+  if (!r){ acClose(); return; }
+  AC.items = r.items; AC.start = r.start; AC.mode = r.mode; AC.sel = 0; AC.open = true;
+  acRender(); acPlace();
+}
+function acRender(){
+  const it = AC.items.slice(0, 60);
+  const cur = it[AC.sel];
+  acBox.innerHTML = '<ul role="listbox">' + it.map((m, i) => `<li role="option" data-i="${i}" aria-selected="${i === AC.sel}"><span class="ak ak-${m.kind}">${m.kind}</span><span class="an">${esc(m.name)}</span>${m.params != null && AC.mode !== 'ref' ? `<span class="ap">(${esc(m.params)})</span>` : ''}<span class="ar">${esc(m.ret || '')}</span></li>`).join('') + '</ul>' +
+    (cur && cur.doc ? `<div class="ad">${esc(cur.doc)}</div>` : '');
+  acBox.hidden = false;
+  const li = acBox.querySelector('li[aria-selected="true"]'); if (li) li.scrollIntoView({block: 'nearest'});
+}
+function acPlace(){
+  mirror.textContent = ta.value.slice(0, AC.start);
+  const mark = document.createElement('span'); mark.textContent = '​'; mirror.appendChild(mark);
+  const ed = ta.parentElement, w = Math.min(380, ed.clientWidth - 8);
+  acBox.style.width = w + 'px';
+  acBox.style.left = Math.max(4, Math.min(mark.offsetLeft - 8, ed.clientWidth - w - 4)) + 'px';
+  acBox.style.top = (mark.offsetTop + 23) + 'px';
+}
+function acClose(){ AC.open = false; AC.forced = false; acBox.hidden = true; }
+function acAccept(i = AC.sel){
+  const m = AC.items[i]; if (!m) return;
+  const pos = ta.selectionStart;
+  let ins = m.name, caret = ins.length;
+  if (AC.mode !== 'ref' && m.kind === 'm'){
+    const hasArgs = m.params !== '';
+    ins += '()'; caret = hasArgs ? ins.length - 1 : ins.length;
+    if (ta.value[pos] === '(') { ins = m.name; caret = ins.length; }
+  }
+  ta.setRangeText(ins, AC.start, pos, 'end');
+  ta.setSelectionRange(AC.start + caret, AC.start + caret);
+  acClose();
+  P.code[ALL[idx].id] = ta.value; save(); syncEditor();
+}
+acBox.addEventListener('mousedown', e => { e.preventDefault(); const li = e.target.closest('li'); if (li) acAccept(+li.dataset.i); });
+ta.addEventListener('blur', () => setTimeout(acClose, 100));
+ta.addEventListener('click', acClose);
+
+/* --- exécution --- */
+let lastWin = false;
+function evalSafe(code, ds){
+  BUDGET = 0; OUT = [];
+  try { const v = evalJava(code, ds); return {v, out: OUT.slice()}; }
+  catch (e) { return {err: friendlyError(e), out: OUT.slice()}; }
+}
+function expected(ex, t){
+  const k = ex.id + ':' + t;
+  if (!(k in expCache)) expCache[k] = evalSafe(ex.sol, dataset(ex.data, t)).v;
+  return expCache[k];
+}
+function shapeHint(exp, act){
+  if (act instanceof JStream) return 'Tu renvoies un Stream : il manque une opération terminale (toList(), collect(...), count()...).';
+  if (act === undefined) return 'Ton expression ne renvoie rien (forEach renvoie void). Utilise une opération terminale qui produit une valeur.';
+  const te = jtype(exp).split('<')[0], tt = jtype(act).split('<')[0];
+  if (te !== tt && !(isNumLike(exp) && isNumLike(act))) return `Mauvais type : on attend un ${jtype(exp)}, tu renvoies un ${jtype(act)}.`;
+  if (act instanceof JOptional && !(exp instanceof JOptional)) return 'Tu renvoies un Optional : déballe-le (orElse, orElseThrow...).';
+  return '';
+}
+function resultBlock(label, v, type){ return `<div><div class="lbl">${label}<code>${esc(type || jtype(v))}</code></div><pre>${v === undefined ? '(rien : void)' : esc(jstr(v))}</pre></div>`; }
+function run(){
+  const ex = ALL[idx], code = ta.value;
+  const res = $('#results');
+  if (ex === SANDBOX){
+    const r = evalSafe(code, dataset(ex.data, 0));
+    let h = `<div class="test ${r.err ? 'fail' : 'pass'}"><div class="test-head"><span class="mk">${r.err ? '!' : '→'}</span>Résultat</div>`;
+    if (r.err) h += `<div class="err">${esc(r.err.msg)}${r.err.detail ? `<pre>${esc(r.err.detail)}</pre>` : ''}</div>`;
+    else h += `<div class="cmp">${resultBlock('Valeur', r.v)}</div>`;
+    if (r.out.length) h += `<div class="out">Console<pre>${esc(r.out.join('\n'))}</pre></div>`;
+    res.innerHTML = h + '</div>';
+    return;
+  }
+  const runs = [0, 1].map(t => {
+    const r = evalSafe(code, dataset(ex.data, t));
+    const exp = expected(ex, t);
+    r.exp = exp;
+    r.pass = !r.err && deepEq(exp, r.v);
+    return r;
+  });
+  const allPass = runs.every(r => r.pass);
+  let h = '';
+  if (allPass){
+    const first = !P.solved[ex.id];
+    let gain = CHAPTERS[ex.ch].xp;
+    const helped = !!P.hint[ex.id] || !!P.sol[ex.id];
+    if (P.sol[ex.id]) gain = 0; else if (P.hint[ex.id]) gain = Math.round(gain * 0.6);
+    if (first){ P.solved[ex.id] = {xp: gain, helped}; save(); }
+    const nextLabel = idx + 1 < EX.length ? 'Exercice suivant' : 'Bac à sable';
+    h += `<div class="win"><div><b>${first ? 'Validé' : 'Toujours bon'}</b><div class="status">2 tests sur 2 passés${P.sol[ex.id] ? ', solution consultée' : P.hint[ex.id] ? ', avec indice' : ''}</div></div><span class="gain">${first ? '+' + gain + ' XP' : ''}</span><span class="spacer"></span><button class="run" id="nextBtn">${nextLabel} <kbd>Ctrl ↵</kbd></button></div>`;
+    lastWin = true;
+  } else lastWin = false;
+  runs.forEach((r, t) => {
+    const hidden = t === 1;
+    h += `<div class="test ${r.pass ? 'pass' : 'fail'}"><div class="test-head"><span class="mk">${r.pass ? '✓' : '✗'}</span>Test ${t + 1}<small>${hidden ? 'données cachées' : 'données visibles'}</small></div>`;
+    if (r.err) h += `<div class="err">${esc(r.err.msg)}${r.err.detail ? `<pre>${esc(r.err.detail)}</pre>` : ''}</div>`;
+    else if (!hidden || !r.pass){
+      if (hidden && runs[0].pass) h += `<div class="note">Ton code marche sur l'exemple mais pas sur un autre jeu de données. Vérifie que tu n'as pas codé une valeur en dur.</div>`;
+      const sh = r.pass ? '' : shapeHint(r.exp, r.v);
+      h += `<div class="cmp">${resultBlock('Ton résultat', r.v, r.pass ? ex.ret : null)}${resultBlock('Attendu', r.exp, ex.ret)}</div>`;
+      if (sh) h += `<div class="note">${esc(sh)}</div>`;
+    }
+    if (r.out.length && !hidden) h += `<div class="out">Console<pre>${esc(r.out.join('\n'))}</pre></div>`;
+    h += '</div>';
+  });
+  res.innerHTML = h;
+  if (allPass){ const nb = $('#nextBtn'); nb.onclick = () => go(idx + 1); updateHeader(); renderNav(); renderBriefPills(); }
+}
+function renderBriefPills(){ const ex = ALL[idx]; const s = P.solved[ex.id]; const pills = document.querySelector('.pills'); if (pills && s && !pills.textContent.includes('résolu')) pills.insertAdjacentHTML('beforeend', `<span class="pill" style="color:var(--ok);border-color:var(--ok)">résolu · ${s.xp} XP</span>`); }
+
+function go(i){
+  if (i < 0 || i >= ALL.length) return;
+  idx = i; P.last = i; save(); lastWin = false;
+  const ex = ALL[idx];
+  $('#sig').innerHTML = ex === SANDBOX ? `<span class="sx-k">var</span> result =` : `<span class="t">${esc(ex.ret)}</span> result =`;
+  ta.value = P.code[ex.id] != null ? P.code[ex.id] : ex.start;
+  syncEditor();
+  $('#results').innerHTML = `<div class="empty">Complète l'expression puis lance l'exécution. Ton code est testé sur les données visibles, puis sur un second jeu de données caché.<br><small>Le code tourne dans un simulateur Java directement dans ton navigateur. Toutes les solutions sont vérifiées avec le vrai JDK 21, mais ce n'est pas une JVM : quelques écarts restent possibles.</small></div>`;
+  $('#status').textContent = '';
+  acClose(); renderNav(); renderBrief(); showTab('brief');
+  const it = document.querySelector('.item[aria-current="true"]'); if (it) it.scrollIntoView({block: 'nearest'});
+  document.querySelector('section.brief').scrollTop = 0;
+  ta.focus({preventScroll: true});
+  const end = ta.value.length; ta.setSelectionRange(end, end);
+}
+$('#runBtn').onclick = run;
+$('#resetBtn').onclick = () => setCode(ALL[idx].start);
+
+/* --- mémo --- */
+const MEMO = [
+  ['Créer un stream', [['list.stream()', 'depuis une collection'], ['Stream.of(a, b, c)', 'à partir de valeurs'], ['Arrays.stream(tab)', 'depuis un tableau'], ['IntStream.range(a, b)', 'a inclus, b exclu (rangeClosed : b inclus)']]],
+  ['Opérations intermédiaires', [['filter(x -> ...)', 'garde ce qui renvoie true'], ['map(x -> ...)', 'transforme chaque élément'], ['mapToInt / mapToDouble', 'passe en stream primitif (sum, average...)'], ['boxed() / mapToObj', 'repasse en Stream d\'objets'], ['flatMap(x -> stream)', 'aplatit des streams imbriqués'], ['distinct()', 'retire les doublons'], ['sorted() / sorted(cmp)', 'trie, de façon stable'], ['limit(n) / skip(n)', 'découpe'], ['peek(x -> ...)', 'observe sans modifier (debug)']]],
+  ['Opérations terminales', [['toList()', 'List non modifiable (Java 16+)'], ['collect(collector)', 'voir Collectors'], ['count()', 'renvoie un long'], ['sum() / average()', 'IntStream et DoubleStream seulement'], ['min(cmp) / max(cmp)', 'Optional<T>'], ['reduce(id, op)', 'combine tout en une valeur'], ['anyMatch / allMatch / noneMatch', 'boolean, court-circuit'], ['findFirst()', 'Optional<T>'], ['forEach(x -> ...)', 'void']]],
+  ['Collectors', [['toList() / toSet()', ''], ['toMap(k, v[, fusion])', 'fusion obligatoire si clés en double'], ['joining(sep[, pré, suf])', 'String'], ['groupingBy(f[, aval])', 'Map<K, List<T>> par défaut'], ['partitioningBy(p[, aval])', 'Map<Boolean, ...>'], ['counting()', 'Long'], ['summingInt / summingDouble', ''], ['averagingInt / averagingDouble', 'Double'], ['mapping(f, aval)', 'transforme avant le collector aval'], ['collectingAndThen(c, f)', 'post-traite le résultat']]],
+  ['Comparator', [['Comparator.comparing(f)', 'par clé'], ['comparingInt / comparingDouble', 'sans boxing'], ['.reversed()', 'inverse'], ['.thenComparing(f[, cmp])', 'critère secondaire'], ['naturalOrder() / reverseOrder()', ''], ['Map.Entry.comparingByValue()', 'pour trier des entrées de Map']]],
+  ['Optional', [['orElse(v)', 'valeur par défaut'], ['orElseThrow()', 'NoSuchElementException si vide'], ['map(f)', 'transforme si présent'], ['isPresent() / ifPresent(f)', ''], ['getAsInt() / getAsDouble()', 'pour OptionalInt / OptionalDouble']]],
+];
+$('#memoPane').innerHTML = MEMO.map(([t, rows]) => `<h4>${t}</h4><dl>${rows.map(([a, b]) => `<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl>`).join('') +
+  `<h4>Raccourcis de l'éditeur</h4><dl><dt>.  ou  ::</dt><dd>ouvre les suggestions adaptées au type</dd><dt>Ctrl + Espace</dt><dd>force les suggestions</dd><dt>↑ ↓ puis Entrée / Tab</dt><dd>choisit une suggestion</dd><dt>Échap</dt><dd>ferme les suggestions</dd><dt>Ctrl + Entrée</dt><dd>exécute, puis passe à l'exercice suivant une fois validé</dd></dl><h4>À propos du simulateur</h4><p>Le code est interprété directement dans le navigateur, sans JVM. Il couvre l'essentiel de l'API Stream et signale les erreurs classiques (sum() sur un Stream&lt;Integer&gt;, collect sur un IntStream, clé en double dans toMap...), mais il reste un peu plus permissif que javac sur les types.</p>`;
+function showTab(t){
+  $('#tabBrief').setAttribute('aria-selected', t === 'brief'); $('#tabMemo').setAttribute('aria-selected', t === 'memo');
+  $('#briefPane').hidden = t !== 'brief'; $('#memoPane').hidden = t !== 'memo';
+}
+$('#tabBrief').onclick = () => showTab('brief');
+$('#tabMemo').onclick = () => showTab('memo');
+window.addEventListener('resize', syncEditor);
+
+/* --- accueil et réglages --- */
+const W_KEY = 'streamdojo.welcomed';
+function openWelcome(){ $('#welcome').hidden = false; $('#wStart').focus(); }
+function closeWelcome(){ $('#welcome').hidden = true; try { localStorage.setItem(W_KEY, '1'); } catch (e) {} ta.focus({preventScroll: true}); }
+$('.wcode').innerHTML = highlight('employees.stream()\n    .filter(e -> e.getDept().equals("IT"))\n    .map(Employee::getName)\n    .toList()   // [Alice, Chloé, Farid]');
+$('#wStart').onclick = () => { closeWelcome(); go(0); };
+$('#wSand').onclick = () => { closeWelcome(); go(ALL.indexOf(SANDBOX)); };
+$('#welcome').addEventListener('click', e => { if (e.target.id === 'welcome') closeWelcome(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#welcome').hidden) closeWelcome(); });
+$('#aboutBtn').onclick = openWelcome;
+let resetArmed = false;
+$('#resetAll').onclick = () => {
+  if (!resetArmed){ resetArmed = true; $('#resetAll').textContent = 'Confirmer : tout effacer'; setTimeout(() => { resetArmed = false; $('#resetAll').textContent = 'Effacer ma progression'; }, 4000); return; }
+  P = {solved: {}, code: {}, hint: {}, sol: {}, last: 0}; save(); resetArmed = false;
+  $('#resetAll').textContent = 'Effacer ma progression'; updateHeader(); go(0);
+};
+updateHeader(); go(idx);
+let welcomed = false; try { welcomed = !!localStorage.getItem(W_KEY); } catch (e) {}
+if (!welcomed && !Object.keys(P.solved).length && !Object.keys(P.code).length) openWelcome();
+</script>
+</body>
+</html>
